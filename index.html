@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kieru Code Platform - منصة كيريو للبرمجة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- خلفية متحركة -->
+    <div class="bg-animation">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+
+    <!-- الشريط الجانبي للتنقل -->
+    <nav class="glass-sidebar">
+        <div class="logo">
+            <i class="fas fa-code-branch"></i>
+            <h2>كيريو</h2>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home" class="active"><i class="fas fa-home"></i> الرئيسية</a></li>
+            <li><a href="#training"><i class="fas fa-graduation-cap"></i> التدريب</a></li>
+            <li><a href="#playground"><i class="fas fa-play-circle"></i> الملعب الحر</a></li>
+            <li><a href="#progress"><i class="fas fa-chart-line"></i> التقدم</a></li>
+            <li><a href="#about"><i class="fas fa-users"></i> الفريق</a></li>
+        </ul>
+        <div class="user-section">
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span>متدرب</span>
+            </div>
+            <button id="themeToggle" class="theme-btn">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <!-- قسم الرئيسية -->
+        <section id="home" class="glass-section active-section">
+            <div class="hero">
+                <h1 class="hero-title">
+                    <span class="title-word title-word-1">مرحباً بكم في</span>
+                    <span class="title-word title-word-2">منصة كيريو</span>
+                    <span class="title-word title-word-3">للتدريب البرمجي</span>
+                </h1>
+                <p class="hero-subtitle">تدرب على أكثر من 50 سؤالاً برمجياً من منصة كيريو اليابانية مع تصحيح فوري</p>
+                <div class="hero-stats">
+                    <div class="stat-card glass-card">
+                        <i class="fas fa-code"></i>
+                        <h3>50+</h3>
+                        <p>سؤال برمجي</p>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>تصحيح</h3>
+                        <p>فوري</p>
+                    </div>
+                    <div class="stat-card glass-card">
+                        <i class="fas fa-bolt"></i>
+                        <h3>محرر</h3>
+                        <p>ذكي</p>
+                    </div>
+                </div>
+                <a href="#training" class="cta-button glass-card">
+                    ابدأ التحدي الآن <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- قسم التدريب -->
+        <section id="training" class="glass-section">
+            <div class="section-header">
+                <h2><i class="fas fa-graduation-cap"></i> قسم التدريب</h2>
+                <p>اختر سؤالاً من الأسئلة أدناه وابدأ الحل</p>
+            </div>
+
+            <div class="training-container">
+                <!-- قائمة الأسئلة -->
+                <div class="questions-sidebar glass-card">
+                    <div class="questions-header">
+                        <h3>أسئلة كيريو</h3>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="questionSearch" placeholder="ابحث عن سؤال...">
+                        </div>
+                    </div>
+                    <div class="questions-list" id="questionsList">
+                        <!-- سيتم ملؤها بـ JavaScript -->
+                    </div>
+                    <div class="questions-footer">
+                        <div class="progress-info">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <span id="progressText">0% مكتمل</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- منطقة عرض السؤال والكود -->
+                <div class="question-editor-container">
+                    <div class="question-display glass-card">
+                        <div class="question-header">
+                            <h3 id="questionTitle">اختر سؤالاً من القائمة</h3>
+                            <div class="question-meta">
+                                <span class="difficulty-label" id="questionDifficulty">سهل</span>
+                                <span class="points-label" id="questionPoints">10 نقاط</span>
+                            </div>
+                        </div>
+                        <div class="question-body">
+                            <p id="questionDescription">اختر سؤالاً من القائمة الجانبية لعرض التفاصيل</p>
+                            <div class="sample-io">
+                                <div class="input-section">
+                                    <h4>مثال للإدخال:</h4>
+                                    <pre id="sampleInput">-</pre>
+                                </div>
+                                <div class="output-section">
+                                    <h4>مثال للخرج:</h4>
+                                    <pre id="sampleOutput">-</pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="code-editor-container glass-card">
+                        <div class="editor-header">
+                            <div class="language-tabs">
+                                <button class="lang-tab active" data-lang="python">Python</button>
+                                <button class="lang-tab" data-lang="javascript">JavaScript</button>
+                                <button class="lang-tab" data-lang="java">Java</button>
+                            </div>
+                            <div class="editor-actions">
+                                <button id="runCodeBtn" class="action-btn">
+                                    <i class="fas fa-play"></i> تشغيل
+                                </button>
+                                <button id="submitCodeBtn" class="action-btn primary">
+                                    <i class="fas fa-paper-plane"></i> إرسال الحل
+                                </button>
+                            </div>
+                        </div>
+                        <textarea id="codeEditor" class="code-editor" placeholder="اكتب كودك هنا..."># اكتب كودك هنا</textarea>
+                        <div class="editor-footer">
+                            <div class="hint-section">
+                                <button id="showHintBtn" class="hint-btn">
+                                    <i class="fas fa-lightbulb"></i> تلميح
+                                </button>
+                                <div id="hintText" class="hint-text"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="output-container glass-card">
+                        <div class="output-header">
+                            <h3><i class="fas fa-terminal"></i> النتيجة</h3>
+                            <button id="clearOutputBtn" class="clear-btn">
+                                <i class="fas fa-trash"></i> مسح
+                            </button>
+                        </div>
+                        <div class="output-content" id="outputContent">
+                            <p class="output-placeholder">النتيجة ستظهر هنا بعد تشغيل الكود</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم الملعب الحر -->
+        <section id="playground" class="glass-section">
+            <div class="section-header">
+                <h2><i class="fas fa-play-circle"></i> الملعب الحر</h2>
+                <p>اكتب وأجرِ أي كود تريده بدون قيود</p>
+            </div>
+
+            <div class="playground-container">
+                <div class="playground-editor glass-card">
+                    <div class="playground-header">
+                        <h3>محرر حر</h3>
+                        <select id="playgroundLang">
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="html">HTML/CSS/JS</option>
+                            <option value="cpp">C++</option>
+                        </select>
+                    </div>
+                    <textarea id="playgroundEditor" class="code-editor" placeholder="اكتب أي كود تريد تجربته..."></textarea>
+                    <div class="playground-actions">
+                        <button id="playgroundRunBtn" class="action-btn large">
+                            <i class="fas fa-play-circle"></i> تشغيل الكود
+                        </button>
+                        <button id="playgroundSaveBtn" class="action-btn secondary">
+                            <i class="fas fa-save"></i> حفظ الكود
+                        </button>
+                    </div>
+                </div>
+
+                <div class="playground-output glass-card">
+                    <div class="output-header">
+                        <h3>النتيجة</h3>
+                    </div>
+                    <div id="playgroundOutput" class="playground-output-content">
+                        <p>ستظهر نتيجة الكود هنا</p>
+                    </div>
+                    <div class="saved-codes">
+                        <h4><i class="fas fa-history"></i> الأكواد المحفوظة</h4>
+                        <ul id="savedCodesList"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم التقدم -->
+        <section id="progress" class="glass-section">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-line"></i> تقدمك</h2>
+                <p>احصائيات عن أدائك في المنصة</p>
+            </div>
+
+            <div class="progress-stats">
+                <div class="progress-card glass-card">
+                    <h3>إجمالي النقاط</h3>
+                    <div class="progress-number" id="totalPoints">0</div>
+                    <p>نقطة</p>
+                </div>
+                <div class="progress-card glass-card">
+                    <h3>الأسئلة المحلولة</h3>
+                    <div class="progress-number" id="solvedQuestions">0</div>
+                    <p>من أصل 50</p>
+                </div>
+                <div class="progress-card glass-card">
+                    <h3>مستوى الصعوبة</h3>
+                    <div class="progress-level">
+                        <div class="level-circle" id="difficultyCircle"></div>
+                        <p id="difficultyText">مبتدئ</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-chart glass-card">
+                <h3>توزيع الأسئلة المحلولة</h3>
+                <canvas id="progressChart"></canvas>
+            </div>
+        </section>
+
+        <!-- قسم الفريق -->
+        <section id="about" class="glass-section">
+            <div class="section-header">
+                <h2><i class="fas fa-users"></i> فريقنا</h2>
+                <p>المطورين والمبدعين وراء المنصة</p>
+            </div>
+
+            <div class="team-container">
+                <div class="team-card glass-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>محمود أحمد سعيد</h3>
+                    <p class="team-role">المطور الرئيسي</p>
+                    <p class="team-bio">مطور ومصمم واجهات مستخدم، متخصص في إنشاء منصات تعليمية تفاعلية.</p>
+                    <div class="team-skills">
+                        <span>JavaScript</span>
+                        <span>React</span>
+                        <span>UI/UX</span>
+                    </div>
+                </div>
+
+                <div class="team-card glass-card">
+                    <div class="team-avatar">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>سلمي سيد سخيل</h3>
+                    <p class="team-role">صاحبة الفكرة والمديرة التعليمية</p>
+                    <p class="team-bio">مبتكرة فكرة المنصة، متخصصة في تصميم المحتوى التعليمي والتحديات البرمجية.</p>
+                    <div class="team-skills">
+                        <span>التخطيط التعليمي</span>
+                        <span>تصميم التحديات</span>
+                        <span>جودة المحتوى</span>
+                    </div>
+                </div>
+
+                <div class="platform-info glass-card">
+                    <h3>عن منصة كيريو</h3>
+                    <p>كيريو هي منصة يابانية شهيرة لتدريب البرمجة تحتوي على مئات الأسئلة التطبيقية. قمنا بتجميع 50+ سؤالاً من هذه المنصة مع إضافة نظام تصحيح آلي لمساعدة المبرمجين العرب على تحسين مهاراتهم.</p>
+                    <div class="features-list">
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>أسئلة حقيقية من كيريو</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-bolt"></i>
+                            <span>تصحيح فوري</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-line"></i>
+                            <span>تتبع التقدم</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- نافذة التلميح -->
+    <div id="hintModal" class="modal glass-card">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-lightbulb"></i> تلميح</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="hintModalBody">
+                <p>جاري تحميل التلميح...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
