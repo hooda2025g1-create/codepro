@@ -20,6 +20,265 @@
             transition: all 0.3s ease;
         }
 
+        /* ====== شاشة الترحيب مع الأنيميشن ====== */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            pointer-events: none;
+        }
+
+        .welcome-screen.fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+        }
+
+        .welcome-content {
+            text-align: center;
+            color: white;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: welcomeContentIn 1.2s ease 0.3s forwards;
+        }
+
+        @keyframes welcomeContentIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-logo {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+        }
+
+        .welcome-logo i {
+            font-size: 48px;
+            color: white;
+        }
+
+        .name-container {
+            margin-bottom: 30px;
+        }
+
+        .welcome-name {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #fff, #f0f0f0, #fff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: nameGradient 3s ease infinite, nameReveal 1.5s ease forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes nameGradient {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes nameReveal {
+            0% {
+                letter-spacing: 20px;
+                opacity: 0;
+            }
+            100% {
+                letter-spacing: normal;
+                opacity: 1;
+            }
+        }
+
+        .welcome-name::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: white;
+            animation: underlineExpand 1s ease 1s forwards;
+        }
+
+        @keyframes underlineExpand {
+            0% {
+                width: 0;
+            }
+            100% {
+                width: 80%;
+            }
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            opacity: 0;
+            animation: subtitleFadeIn 1s ease 1.5s forwards;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @keyframes subtitleFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin: 30px auto;
+            overflow: hidden;
+            opacity: 0;
+            animation: loadingBarAppear 0.5s ease 2s forwards;
+        }
+
+        @keyframes loadingBarAppear {
+            0% {
+                opacity: 0;
+                width: 0;
+            }
+            100% {
+                opacity: 1;
+                width: 200px;
+            }
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #fff, #f0f0f0);
+            border-radius: 2px;
+            animation: loadingProgress 2s ease 2.5s forwards;
+        }
+
+        @keyframes loadingProgress {
+            0% {
+                width: 0;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* تحسينات للجوال */
+        @media (max-width: 768px) {
+            .welcome-logo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .welcome-logo i {
+                font-size: 40px;
+            }
+            
+            .welcome-name {
+                font-size: 2.5rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+            
+            .loading-bar {
+                width: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-logo {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 20px;
+            }
+            
+            .welcome-logo i {
+                font-size: 32px;
+            }
+            
+            .welcome-name {
+                font-size: 2rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .loading-bar {
+                width: 120px;
+            }
+        }
+
+        /* تحسينات للتابلت */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .welcome-logo {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .welcome-logo i {
+                font-size: 56px;
+            }
+            
+            .welcome-name {
+                font-size: 4rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1.4rem;
+            }
+            
+            .loading-bar {
+                width: 250px;
+            }
+        }
+
+        /* ====== نهاية شاشة الترحيب ====== */
+
         /* زر الوضع الداكن */
         .theme-toggle {
             position: fixed;
@@ -732,9 +991,32 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+        
+        /* تحسينات للأداء والسلاسة */
+        .welcome-screen * {
+            will-change: transform, opacity;
+        }
     </style>
 </head>
 <body>
+    <!-- شاشة الترحيب -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-content">
+            <div class="welcome-logo">
+                <i class="fas fa-code"></i>
+            </div>
+            
+            <div class="name-container">
+                <h1 class="welcome-name">حودا</h1>
+                <p class="welcome-subtitle">مشغل JavaScript المتطور</p>
+            </div>
+            
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- زر الوضع الداكن -->
     <div class="theme-toggle">
         <button id="themeToggle">
@@ -867,65 +1149,586 @@ console.log("مربع 8 هو: " + square(8));</pre>
         </div>
     </div>
 
-    <script src="script.js"></script>
     <script>
-        // إضافة أنيميشن عند دخول الموقع
+        // =============================================
+        // إدارة شاشة الترحيب مع الأنيميشن
+        // =============================================
+        function initializeWelcomeScreen() {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            
+            if (!welcomeScreen) {
+                console.log('شاشة الترحيب غير موجودة');
+                return;
+            }
+            
+            // التحقق إذا كان المستخدم قد زار الموقع من قبل
+            const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
+            
+            if (hasVisitedBefore) {
+                // إذا زار من قبل، تظهر الشاشة لفترة قصيرة فقط
+                setTimeout(() => {
+                    hideWelcomeScreen();
+                }, 1500);
+            } else {
+                // أول زيارة، تظهر لفترة أطول
+                localStorage.setItem('hasVisitedBefore', 'true');
+                setTimeout(() => {
+                    hideWelcomeScreen();
+                }, 3000);
+            }
+            
+            // إضافة تأثيرات تفاعلية إضافية
+            setupWelcomeInteractions();
+        }
+
+        function hideWelcomeScreen() {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            
+            if (!welcomeScreen) return;
+            
+            // إضافة class للخروج
+            welcomeScreen.classList.add('fade-out');
+            
+            // إزالة الشاشة بعد انتهاء الأنيميشن
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+                
+                // إظهار المحتوى الرئيسي بسلاسة
+                const container = document.querySelector('.container');
+                if (container) {
+                    container.style.opacity = '0';
+                    container.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        container.style.transition = 'opacity 0.8s ease';
+                        container.style.opacity = '1';
+                        
+                        // إضافة أنيميشن إضافية للمحتوى
+                        animateMainContent();
+                    }, 100);
+                }
+                
+                // إظهار زر تبديل الثيم بسلاسة
+                const themeToggle = document.querySelector('.theme-toggle');
+                if (themeToggle) {
+                    themeToggle.style.opacity = '0';
+                    setTimeout(() => {
+                        themeToggle.style.transition = 'opacity 0.8s ease';
+                        themeToggle.style.opacity = '1';
+                    }, 300);
+                }
+                
+            }, 800); // وقت أنيميشن الخروج
+        }
+
+        function setupWelcomeInteractions() {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            
+            if (!welcomeScreen) return;
+            
+            // تفاعل اللمس/النقر للاختفاء السريع
+            welcomeScreen.addEventListener('click', function() {
+                hideWelcomeScreen();
+            });
+            
+            welcomeScreen.addEventListener('touchstart', function() {
+                this.style.opacity = '0.9';
+            });
+            
+            welcomeScreen.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+                hideWelcomeScreen();
+            });
+            
+            // تفاعل لوحة المفاتيح للاختفاء السريع
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+                    hideWelcomeScreen();
+                }
+            });
+        }
+
+        function animateMainContent() {
+            // أنيميشن للعناصر الرئيسية بعد اختفاء شاشة الترحيب
+            const elements = [
+                '.header',
+                '.editor-box',
+                '.output-box',
+                '.footer'
+            ];
+            
+            elements.forEach((selector, index) => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    element.style.opacity = '0';
+                    element.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }, 100 * index);
+                }
+            });
+        }
+
+        // =============================================
+        // تهيئة النظام الأساسي
+        // =============================================
+        function initializeSystem() {
+            // بدء شاشة الترحيب أولاً
+            initializeWelcomeScreen();
+            
+            // تهيئة النظام الأساسي بعد تأخير بسيط
+            setTimeout(() => {
+                // بقية التهيئة الأساسية
+                adjustEditorSize();
+                createExamplesModal();
+                addExamplesButton();
+                displayRandomExamples();
+            }, 500);
+        }
+
+        // =============================================
+        // وظائف النظام الأساسية
+        // =============================================
+        function adjustEditorSize() {
+            const editor = document.getElementById('code-input');
+            const output = document.getElementById('output');
+            
+            if (!editor || !output) return;
+            
+            if (window.innerWidth < 768) {
+                editor.style.minHeight = '250px';
+                output.style.minHeight = '200px';
+            } else {
+                const availableHeight = window.innerHeight - 250;
+                editor.style.minHeight = Math.max(300, availableHeight) + 'px';
+                output.style.minHeight = Math.max(300, availableHeight) + 'px';
+            }
+        }
+
+        function createExamplesModal() {
+            if (document.getElementById('examplesModal')) return;
+            
+            // النافذة موجودة بالفعل في HTML
+            // فقط إعداد أحداث الإغلاق
+            setupModalCloseEvents();
+        }
+
+        function setupModalCloseEvents() {
+            const modal = document.getElementById('examplesModal');
+            if (!modal) return;
+            
+            // إغلاق بالزر
+            const closeBtn = modal.querySelector('.close-modal');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    closeExamplesModal();
+                });
+            }
+            
+            // إغلاق بالنقر خارج النافذة
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeExamplesModal();
+                }
+            });
+        }
+
+        function addExamplesButton() {
+            const controls = document.querySelector('.controls');
+            if (!controls) return;
+            
+            const existingBtn = controls.querySelector('.examples-btn');
+            if (existingBtn) return;
+            
+            const examplesBtn = document.createElement('button');
+            examplesBtn.className = 'btn examples-btn';
+            examplesBtn.innerHTML = '<i class="fas fa-code"></i> أمثلة';
+            
+            examplesBtn.addEventListener('click', openExamplesModal);
+            
+            const runBtn = controls.querySelector('.run-btn');
+            if (runBtn) {
+                runBtn.parentNode.insertBefore(examplesBtn, runBtn.nextSibling);
+            } else {
+                controls.appendChild(examplesBtn);
+            }
+        }
+
+        function displayRandomExamples() {
+            const exampleCodeElement = document.querySelector('.example-code pre');
+            if (!exampleCodeElement) return;
+            
+            const randomExamples = [
+                { title: "أساسيات الجمع", code: "console.log(100 + 200);" },
+                { title: "الدوال", code: "function square(x) { return x * x; }\nconsole.log('مربع 8 هو:', square(8));" },
+                { title: "المصفوفات", code: "let numbers = [1,2,3,4,5];\nconsole.log('مجموع المصفوفة:', numbers.reduce((a,b) => a + b, 0));" }
+            ];
+            
+            let examplesHTML = '';
+            randomExamples.forEach(example => {
+                examplesHTML += `// ${example.title}\n${example.code}\n\n`;
+            });
+            
+            exampleCodeElement.textContent = examplesHTML.trim();
+            
+            exampleCodeElement.addEventListener('click', handleExampleClick);
+        }
+
+        function handleExampleClick() {
+            const exampleText = this.textContent;
+            const codeInput = document.getElementById('code-input');
+            
+            if (codeInput) {
+                codeInput.value = exampleText;
+                
+                // أنيميشن للمحرر
+                const editor = document.querySelector('.editor-box');
+                editor.classList.add('glow-animation');
+                setTimeout(() => editor.classList.remove('glow-animation'), 2000);
+                
+                updateStatus('معدل', '#f39c12');
+                saveCurrentCode();
+            }
+        }
+
+        function openExamplesModal() {
+            const modal = document.getElementById('examplesModal');
+            const container = document.getElementById('examplesContainer');
+            
+            if (!modal || !container) return;
+            
+            // أمثلة بسيطة لعرضها
+            const simpleExamples = [
+                { id: 1, title: "جمع أرقام", description: "عمليات حسابية بسيطة", code: "console.log(10 + 5);\nconsole.log(20 - 3);" },
+                { id: 2, title: "الدوال", description: "إنشاء واستدعاء دالة", code: "function greet(name) {\n  return 'مرحباً ' + name;\n}\nconsole.log(greet('أحمد'));" },
+                { id: 3, title: "المصفوفات", description: "التعامل مع المصفوفات", code: "let fruits = ['تفاح', 'موز', 'برتقال'];\nconsole.log('الفواكه:', fruits);" },
+                { id: 4, title: "الشروط", description: "استخدام if و else", code: "let age = 20;\nif (age >= 18) {\n  console.log('يمكنك التصويت');\n} else {\n  console.log('لا يمكنك التصويت');\n}" },
+                { id: 5, title: "الحلقات", description: "استخدام for loop", code: "for(let i = 1; i <= 5; i++) {\n  console.log('رقم:', i);\n}" },
+                { id: 6, title: "الكائنات", description: "إنشاء واستخدام الكائنات", code: "let person = {\n  name: 'أحمد',\n  age: 30,\n  city: 'القاهرة'\n};\nconsole.log('الشخص:', person);" }
+            ];
+            
+            container.innerHTML = '';
+            simpleExamples.forEach(example => {
+                const card = document.createElement('div');
+                card.className = 'example-card';
+                card.innerHTML = `
+                    <h4><i class="fas fa-code"></i> ${example.title}</h4>
+                    <p>${example.description}</p>
+                    <div class="example-tags">
+                        <span class="tag beginner">مبتدئ</span>
+                    </div>
+                `;
+                
+                card.addEventListener('click', function() {
+                    selectExample(example);
+                });
+                
+                container.appendChild(card);
+            });
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function selectExample(example) {
+            const codeInput = document.getElementById('code-input');
+            if (!codeInput) return;
+            
+            codeInput.value = example.code;
+            closeExamplesModal();
+            
+            // إظهار رسالة نجاح
+            showMessage(`تم تحميل مثال: ${example.title}`, 'success');
+            
+            updateStatus('معدل', '#f39c12');
+            saveCurrentCode();
+        }
+
+        function closeExamplesModal() {
+            const modal = document.getElementById('examplesModal');
+            if (!modal) return;
+            
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function runCode() {
+            const codeInput = document.getElementById('code-input');
+            const output = document.getElementById('output');
+            
+            if (!codeInput || !output) return;
+            
+            const code = codeInput.value.trim();
+            
+            if (!code) {
+                showMessage('اكتب بعض الكود أولاً!', 'error');
+                return;
+            }
+            
+            updateStatus('جاري التشغيل...', '#f39c12');
+            
+            // أنيميشن لزر التشغيل
+            const runBtn = document.querySelector('.run-btn');
+            runBtn.classList.add('pulse');
+            setTimeout(() => runBtn.classList.remove('pulse'), 300);
+            
+            // عرض مؤشر تحميل
+            output.innerHTML = `
+                <div class="loading-indicator" style="text-align: center; padding: 40px;">
+                    <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+                    <p style="color: #666;">جاري تنفيذ الكود...</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                executeJavaScriptCode(code, output);
+                updateStatus('جاهز', '#27ae60');
+            }, 500);
+        }
+
+        function executeJavaScriptCode(code, outputElement) {
+            try {
+                const originalConsole = console.log;
+                const logs = [];
+                
+                console.log = function(...args) {
+                    logs.push(args);
+                    originalConsole.apply(console, args);
+                };
+                
+                const result = eval(code);
+                
+                console.log = originalConsole;
+                
+                displayResults(logs, result, outputElement);
+                showMessage('تم تنفيذ الكود بنجاح! ✅', 'success');
+                
+            } catch (error) {
+                displayError(error, outputElement);
+                showMessage('حدث خطأ أثناء التنفيذ ❌', 'error');
+            }
+        }
+
+        function displayResults(logs, result, outputElement) {
+            let html = '<div class="slide-in">';
+            
+            if (logs.length > 0) {
+                html += `<div class="success message"><i class="fas fa-check-circle"></i> <strong>الإخراج (${logs.length})</strong></div>`;
+                
+                logs.forEach(args => {
+                    html += `<div class="output-line">${args.join(' ')}</div>`;
+                });
+            }
+            
+            if (result !== undefined) {
+                html += `
+                    <div class="success message pulse">
+                        <i class="fas fa-arrow-right"></i>
+                        <strong>القيمة المعادة:</strong>
+                        <div class="return-value">${result}</div>
+                    </div>
+                `;
+            }
+            
+            html += `</div>`;
+            
+            outputElement.innerHTML = html;
+        }
+
+        function displayError(error, outputElement) {
+            const html = `
+                <div class="error message slide-in">
+                    <i class="fas fa-bug"></i>
+                    <strong>حدث خطأ!</strong>
+                    <p>${error.name}: ${error.message}</p>
+                </div>
+                
+                <div class="info message">
+                    <i class="fas fa-lightbulb"></i>
+                    <strong>نصائح للحل:</strong>
+                    <ul>
+                        <li>تأكد من صيغة الكود</li>
+                        <li>تحقق من الأقواس والنقاط</li>
+                        <li>تأكد من تعريف المتغيرات قبل استخدامها</li>
+                    </ul>
+                </div>
+            `;
+            
+            outputElement.innerHTML = html;
+        }
+
+        function clearCode() {
+            if (!confirm('هل تريد مسح الكود؟')) return;
+            
+            const codeInput = document.getElementById('code-input');
+            const output = document.getElementById('output');
+            
+            if (!codeInput || !output) return;
+            
+            codeInput.value = '';
+            
+            output.innerHTML = `
+                <div class="info message fade-in">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>المحرر نظيف</strong>
+                    <p>اكتب كود JavaScript جديد واضغط على "تشغيل الكود"</p>
+                </div>
+            `;
+            
+            // أنيميشن لزر المسح
+            const clearBtn = document.querySelector('.clear-btn');
+            clearBtn.classList.add('shake-animation');
+            setTimeout(() => clearBtn.classList.remove('shake-animation'), 500);
+            
+            showMessage('تم مسح المحرر', 'success');
+            updateStatus('جاهز', '#27ae60');
+        }
+
+        function showMessage(text, type = 'info') {
+            const message = document.createElement('div');
+            message.className = `temp-message ${type} message`;
+            
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                info: 'info-circle'
+            };
+            
+            const icon = icons[type] || 'info-circle';
+            
+            message.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease-out;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                border-radius: 8px;
+                padding: 15px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+            
+            message.innerHTML = `
+                <i class="fas fa-${icon}" style="font-size: 20px;"></i>
+                <span>${text}</span>
+            `;
+            
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => {
+                    if (message.parentNode) {
+                        message.remove();
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function updateStatus(text, color) {
+            const statusElement = document.getElementById('status');
+            if (!statusElement) return;
+            
+            statusElement.textContent = text;
+            statusElement.style.color = color;
+        }
+
+        function saveCurrentCode() {
+            const codeInput = document.getElementById('code-input');
+            if (!codeInput) return;
+            
+            const code = codeInput.value.trim();
+            if (code) {
+                try {
+                    localStorage.setItem('lastCode', code);
+                } catch (e) {
+                    console.warn('تعذر حفظ الكود في localStorage:', e);
+                }
+            }
+        }
+
+        function loadSavedCode() {
+            try {
+                const savedCode = localStorage.getItem('lastCode');
+                if (savedCode) {
+                    const codeInput = document.getElementById('code-input');
+                    if (codeInput) {
+                        codeInput.value = savedCode;
+                    }
+                }
+            } catch (e) {
+                console.warn('تعذر تحميل الكود من localStorage:', e);
+            }
+        }
+
+        // =============================================
+        // تهيئة النظام عند تحميل الصفحة
+        // =============================================
         document.addEventListener('DOMContentLoaded', function() {
-            // أنيميشن العناصر
+            // إخفاء المحتوى الرئيسي مؤقتاً
+            const container = document.querySelector('.container');
+            if (container) {
+                container.style.display = 'none';
+                container.style.opacity = '0';
+            }
+            
+            // إخفاء زر تبديل الثيم مؤقتاً
+            const themeToggle = document.querySelector('.theme-toggle');
+            if (themeToggle) {
+                themeToggle.style.opacity = '0';
+            }
+            
+            // تهيئة النظام
+            initializeSystem();
+            
+            // إضافة أنيميشن للعناصر
             const elements = document.querySelectorAll('.editor-box, .output-box, .header, .footer');
             elements.forEach((el, index) => {
                 el.style.opacity = '0';
                 el.style.transform = 'translateY(20px)';
-                
-                setTimeout(() => {
-                    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                    el.style.opacity = '1';
-                    el.style.transform = 'translateY(0)';
-                }, index * 200);
             });
-
-            // أنيميشن اسم المطور
-            setTimeout(() => {
-                const devName = document.querySelector('.team-info p:first-child');
-                if (devName) {
-                    devName.classList.add('pulse');
-                    setTimeout(() => devName.classList.remove('pulse'), 1000);
-                }
-            }, 1000);
-
+            
             // الوضع الداكن
-            const themeToggle = document.getElementById('themeToggle');
             if (themeToggle) {
                 themeToggle.addEventListener('click', function() {
                     document.body.classList.toggle('dark');
                     const isDark = document.body.classList.contains('dark');
                     localStorage.setItem('theme', isDark ? 'dark' : 'light');
                 });
-
+                
                 // تحميل الثيم المحفوظ
                 const savedTheme = localStorage.getItem('theme');
                 if (savedTheme === 'dark') {
                     document.body.classList.add('dark');
                 }
             }
-
-            // أنيميشن عند التمرير
-            const observerOptions = {
-                threshold: 0.1
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('fade-in');
-                    }
-                });
-            }, observerOptions);
-
-            // مراقبة العناصر
-            const animatedElements = document.querySelectorAll('.team-member, .example-code, .message');
-            animatedElements.forEach(el => observer.observe(el));
+            
+            // تحميل الكود المحفوظ
+            loadSavedCode();
+            
+            // إضافة أنيميشن spin
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
         });
+
+        window.addEventListener('resize', adjustEditorSize);
     </script>
 </body>
 </html>
