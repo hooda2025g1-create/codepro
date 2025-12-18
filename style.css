@@ -330,3 +330,180 @@ body {
         justify-content: space-between;
     }
 }
+
+/* إصلاحات خاصة للجوال */
+@media (max-width: 767px) {
+    /* تحسين أزرار التحكم للجوال */
+    .controls {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+    
+    .btn {
+        padding: 10px 12px;
+        font-size: 13px;
+        min-width: 0;
+        flex: 1;
+        justify-content: center;
+        white-space: nowrap;
+    }
+    
+    .btn i {
+        margin-left: 5px;
+    }
+    
+    /* تحسين نافذة الأمثلة للجوال */
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .modal-body {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 15px;
+        max-height: 70vh;
+    }
+    
+    .example-card {
+        padding: 12px;
+    }
+    
+    .example-card h4 {
+        font-size: 15px;
+    }
+    
+    .example-card p {
+        font-size: 13px;
+    }
+    
+    .tag {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+    
+    /* تحسين زر الإغلاق للجوال */
+    .close-modal {
+        width: 35px;
+        height: 35px;
+        font-size: 24px;
+    }
+    
+    /* منع التكبير عند النقر على المدخلات */
+    input, textarea, select {
+        font-size: 16px;
+    }
+}
+
+/* أنيميشن سلس للنوافذ */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(30px); opacity: 0; }
+}
+
+/* تحسينات للأنيميشن */
+.modal-overlay {
+    animation-duration: 0.3s;
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.modal-content {
+    animation-duration: 0.4s;
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* أنيميشن سلس للبطاقات */
+.example-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.example-card:hover {
+    transform: translateY(-5px) scale(1.02);
+}
+
+/* تحسينات للأزرار */
+.btn {
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* إصلاحات للجوال */
+@media (max-width: 767px) {
+    .modal-content {
+        animation-duration: 0.35s;
+        animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .example-card {
+        transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+}
+
+/* منع فلاش الأنيميشن */
+.modal-overlay[style*="display: none"] {
+    display: none !important;
+}
+
+/* تحسينات للأداء */
+.modal-overlay, .modal-content, .example-card {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* تحسين scroll للنافذة */
+.modal-body {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* أنيميشن لظهور البطاقات واحدة تلو الأخرى */
+.example-card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* تأخير ظهور البطاقات */
+.example-card:nth-child(1) { animation-delay: 0.1s; }
+.example-card:nth-child(2) { animation-delay: 0.15s; }
+.example-card:nth-child(3) { animation-delay: 0.2s; }
+.example-card:nth-child(4) { animation-delay: 0.25s; }
+.example-card:nth-child(5) { animation-delay: 0.3s; }
+.example-card:nth-child(6) { animation-delay: 0.35s; }
+.example-card:nth-child(7) { animation-delay: 0.4s; }
+.example-card:nth-child(8) { animation-delay: 0.45s; }
+.example-card:nth-child(9) { animation-delay: 0.5s; }
+.example-card:nth-child(10) { animation-delay: 0.55s; }
+.example-card:nth-child(11) { animation-delay: 0.6s; }
+.example-card:nth-child(12) { animation-delay: 0.65s; }
+.example-card:nth-child(13) { animation-delay: 0.7s; }
+.example-card:nth-child(14) { animation-delay: 0.75s; }
+.example-card:nth-child(15) { animation-delay: 0.8s; }

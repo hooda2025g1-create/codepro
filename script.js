@@ -1,8 +1,9 @@
 // =============================================
-// 1. إعدادات النظام والمتغيرات
+// 1. تهيئة النظام والمتغيرات العالمية
 // =============================================
 let isRunning = false;
 let executionTimeout = null;
+let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 // =============================================
 // 2. مكتبة الأمثلة الكاملة (15 مثال)
@@ -525,158 +526,106 @@ try {
 ];
 
 // =============================================
-// 3. وظائف النظام الأساسية
+// 3. تهيئة النظام عند تحميل الصفحة
 // =============================================
-
-// عند تحميل الصفحة
-window.addEventListener('load', function() {
+document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ مشغل JavaScript جاهز!");
     
-    // ضبط حجم المحرر
-    adjustEditorSize();
-    window.addEventListener('resize', adjustEditorSize);
-    
-    // إعداد النقر على الأمثلة
-    setupExampleClick();
-    
-    // استرجاع الكود المحفوظ
+    initializeSystem();
+    setupEventListeners();
     loadSavedCode();
 });
 
-// ضبط حجم المحرر
+// =============================================
+// 4. وظائف التهيئة الأساسية
+// =============================================
+function initializeSystem() {
+    adjustEditorSize();
+    setupMobileOptimizations();
+    createExamplesModal();
+    addExamplesButton();
+    displayRandomExamples();
+}
+
+function setupEventListeners() {
+    // حجم النافذة
+    window.addEventListener('resize', adjustEditorSize);
+    
+    // اختصارات لوحة المفاتيح (للكمبيوتر فقط)
+    if (!isTouchDevice) {
+        document.addEventListener('keydown', handleKeyboardShortcuts);
+    }
+    
+    // استماع لتغيرات المحرر
+    const codeInput = document.getElementById('code-input');
+    if (codeInput) {
+        codeInput.addEventListener('input', handleCodeInput);
+        codeInput.addEventListener('blur', saveCurrentCode);
+    }
+}
+
+// =============================================
+// 5. وظائف التحكم بالمحرر
+// =============================================
 function adjustEditorSize() {
     const editor = document.getElementById('code-input');
     const output = document.getElementById('output');
     
+    if (!editor || !output) return;
+    
     if (window.innerWidth < 768) {
-        editor.style.minHeight = '300px';
-        output.style.minHeight = '300px';
+        editor.style.minHeight = '250px';
+        output.style.minHeight = '200px';
     } else {
-        const availableHeight = window.innerHeight - 200;
-        editor.style.minHeight = availableHeight + 'px';
-        output.style.minHeight = availableHeight + 'px';
+        const availableHeight = window.innerHeight - 250;
+        editor.style.minHeight = Math.max(300, availableHeight) + 'px';
+        output.style.minHeight = Math.max(300, availableHeight) + 'px';
     }
 }
 
-// إعداد النقر على الأمثلة
-function setupExampleClick() {
-    document.querySelectorAll('.example-code pre').forEach(pre => {
-        pre.style.cursor = 'pointer';
-        pre.addEventListener('click', function() {
-            const exampleCode = this.textContent;
-            document.getElementById('code-input').value = exampleCode;
-            showMessage('تم نسخ المثال إلى المحرر', 'success');
-            
-            // أنيميشن
-            this.classList.add('pulse');
-            setTimeout(() => this.classList.remove('pulse'), 300);
-        });
-    });
-}
-
-// =============================================
-// 4. وظائف نافذة الأمثلة
-// =============================================
-
-// فتح نافذة الأمثلة
-function openExamplesModal() {
-    console.log("فتح نافذة الأمثلة...");
+function handleCodeInput() {
+    const codeInput = document.getElementById('code-input');
+    const statusElement = document.getElementById('status');
     
-    const modal = document.getElementById('examplesModal');
-    const container = document.getElementById('examplesContainer');
+    if (!codeInput || !statusElement) return;
     
-    if (!modal) {
-        showMessage("حدث خطأ في فتح الأمثلة", "error");
-        return;
+    // تحديث الحالة
+    statusElement.textContent = 'معدل';
+    statusElement.style.color = '#f39c12';
+    
+    // عد الأسطر والأحرف
+    const lines = codeInput.value.split('\n').length;
+    const chars = codeInput.value.length;
+    
+    // تحديث العنوان
+    const title = `محرر الكود (${lines} سطر, ${chars} حرف)`;
+    const editorTitle = document.querySelector('.editor-header span');
+    if (editorTitle) {
+        editorTitle.innerHTML = `<i class="fas fa-code"></i> ${title}`;
     }
     
-    // تعبئة الأمثلة
-    container.innerHTML = '';
-    examplesLibrary.forEach(example => {
-        const card = document.createElement('div');
-        card.className = 'example-card';
-        card.innerHTML = `
-            <h4><i class="fas fa-code"></i> ${example.title}</h4>
-            <p>${example.description}</p>
-            <div class="example-tags">
-                <span class="tag ${example.level}">${example.category}</span>
-                ${example.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-            </div>
-        `;
-        
-        card.addEventListener('click', () => {
-            selectExample(example);
-        });
-        
-        container.appendChild(card);
-    });
-    
-    // إظهار النافذة
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    
-    // أنيميشن
-    modal.classList.add('fade-in');
-}
-
-// إغلاق نافذة الأمثلة
-function closeExamplesModal() {
-    const modal = document.getElementById('examplesModal');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// اختيار مثال
-function selectExample(example) {
-    document.getElementById('code-input').value = example.code;
-    closeExamplesModal();
-    showMessage(`تم تحميل مثال: ${example.title}`, 'success');
-    
-    // أنيميشن للمحرر
-    const editor = document.querySelector('.editor-box');
-    editor.classList.add('glow-animation');
-    setTimeout(() => {
-        editor.classList.remove('glow-animation');
-    }, 2000);
-    
-    // تحديث حالة المحرر
-    document.getElementById('status').textContent = 'معدل';
-    document.getElementById('status').style.color = '#f39c12';
-    
-    // حفظ المثال
+    // حفظ تلقائي
     saveCurrentCode();
 }
 
-// منع إغلاق النافذة بالنقر خارجها
-document.addEventListener('click', function(e) {
-    const modal = document.getElementById('examplesModal');
-    if (modal && e.target === modal) {
-        closeExamplesModal();
-    }
-});
-
-// إغلاق النافذة بـ ESC
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeExamplesModal();
-    }
-});
-
 // =============================================
-// 5. وظائف تشغيل الكود
+// 6. وظائف تشغيل الكود
 // =============================================
-
-// تشغيل الكود
 function runCode() {
     if (isRunning) {
         showMessage('جاري تشغيل كود آخر...', 'error');
         return;
     }
     
-    const code = document.getElementById('code-input').value.trim();
+    const codeInput = document.getElementById('code-input');
     const output = document.getElementById('output');
+    
+    if (!codeInput || !output) {
+        showMessage('عناصر DOM غير موجودة', 'error');
+        return;
+    }
+    
+    const code = codeInput.value.trim();
     
     if (!code) {
         showMessage('اكتب بعض الكود أولاً!', 'error');
@@ -685,31 +634,13 @@ function runCode() {
     
     // تعيين حالة التشغيل
     isRunning = true;
-    document.getElementById('status').textContent = 'جاري التشغيل...';
-    document.getElementById('status').style.color = '#f39c12';
+    updateStatus('جاري التشغيل...', '#f39c12');
     
     // أنيميشن للزر
-    const runBtn = document.querySelector('.run-btn');
-    runBtn.classList.add('pulse');
-    setTimeout(() => runBtn.classList.remove('pulse'), 300);
+    animateButton('.run-btn', 'pulse');
     
     // إظهار مؤشر التحميل
-    output.innerHTML = `
-        <div style="text-align: center; padding: 40px;">
-            <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            <p style="margin-top: 15px; color: #3498db; font-weight: bold;">جاري تنفيذ الكود...</p>
-        </div>
-    `;
-    
-    // إضافة أنيميشن الدوران
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    `;
-    document.head.appendChild(style);
+    showLoadingIndicator(output);
     
     // إلغاء أي وقت سابق
     if (executionTimeout) {
@@ -718,152 +649,131 @@ function runCode() {
     
     // تنفيذ الكود بعد تأخير قصير
     executionTimeout = setTimeout(() => {
-        try {
-            // حفظ console الأصلي
-            const originalConsole = {
-                log: console.log,
-                error: console.error,
-                warn: console.warn
-            };
-            
-            let logs = [];
-            let errors = [];
-            let warnings = [];
-            
-            // تجميع الإخراج
-            console.log = function(...args) {
-                logs.push({ type: 'log', args: args });
-                originalConsole.log.apply(console, args);
-            };
-            
-            console.error = function(...args) {
-                errors.push({ type: 'error', args: args });
-                originalConsole.error.apply(console, args);
-            };
-            
-            console.warn = function(...args) {
-                warnings.push({ type: 'warn', args: args });
-                originalConsole.warn.apply(console, args);
-            };
-            
-            // تنفيذ الكود
-            const result = eval(code);
-            
-            // استعادة console الأصلي
-            console.log = originalConsole.log;
-            console.error = originalConsole.error;
-            console.warn = originalConsole.warn;
-            
-            // عرض النتائج
-            displayResults(logs, errors, warnings, result);
-            
-            // إظهار نجاح التنفيذ
-            showMessage('تم تنفيذ الكود بنجاح! ✅', 'success');
-            
-        } catch (error) {
-            // في حالة حدوث خطأ
-            displayError(error);
-            showMessage('حدث خطأ أثناء التنفيذ ❌', 'error');
-        }
-        
-        // إعادة تعيين الحالة
+        executeJavaScriptCode(code, output);
         isRunning = false;
-        document.getElementById('status').textContent = 'جاهز';
-        document.getElementById('status').style.color = '#27ae60';
-        
-    }, 300);
+        updateStatus('جاهز', '#27ae60');
+    }, 100);
 }
 
-// عرض النتائج
-function displayResults(logs, errors, warnings, returnValue) {
-    const output = document.getElementById('output');
-    let html = '';
-    
-    // إضافة النتيجة الرئيسية
-    if (logs.length > 0 || errors.length > 0 || warnings.length > 0) {
-        html += `<div class="slide-in">`;
+function executeJavaScriptCode(code, outputElement) {
+    try {
+        // حفظ console الأصلي
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn,
+            info: console.info
+        };
         
-        // عرض الـ logs
-        if (logs.length > 0) {
-            html += `<div class="success message">
-                <i class="fas fa-check-circle"></i>
-                <strong>الإخراج (${logs.length})</strong>
-            </div>`;
-            
-            logs.forEach(log => {
-                html += `<div style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; border-left: 3px solid #28a745; direction: ltr;">
-                    ${log.args.map(arg => formatOutput(arg)).join(' ')}
-                </div>`;
-            });
-        }
+        const logs = [];
+        const errors = [];
+        const warnings = [];
+        const infos = [];
         
-        // عرض الأخطاء
-        if (errors.length > 0) {
-            html += `<div class="error message">
-                <i class="fas fa-exclamation-circle"></i>
-                <strong>الأخطاء (${errors.length})</strong>
-            </div>`;
-            
-            errors.forEach(error => {
-                html += `<div style="margin: 10px 0; padding: 10px; background: #fef5f5; border-radius: 5px; border-left: 3px solid #dc3545; direction: ltr;">
-                    ${error.args.map(arg => formatOutput(arg)).join(' ')}
-                </div>`;
-            });
-        }
+        // تجميع الإخراج
+        console.log = function(...args) {
+            logs.push({ type: 'log', args });
+            originalConsole.log.apply(console, args);
+        };
         
-        // عرض التحذيرات
-        if (warnings.length > 0) {
-            html += `<div class="info message">
-                <i class="fas fa-exclamation-triangle"></i>
-                <strong>تحذيرات (${warnings.length})</strong>
-            </div>`;
-            
-            warnings.forEach(warning => {
-                html += `<div style="margin: 10px 0; padding: 10px; background: #fefce8; border-radius: 5px; border-left: 3px solid #f59e0b; direction: ltr;">
-                    ${warning.args.map(arg => formatOutput(arg)).join(' ')}
-                </div>`;
-            });
-        }
+        console.error = function(...args) {
+            errors.push({ type: 'error', args });
+            originalConsole.error.apply(console, args);
+        };
         
-        html += `</div>`;
-    } else {
-        html += `<div class="info message slide-in">
-            <i class="fas fa-info-circle"></i>
-            <strong>تم التنفيذ</strong>
-            <p>الكود تم تنفيذه لكن لم يظهر أي إخراج</p>
-        </div>`;
+        console.warn = function(...args) {
+            warnings.push({ type: 'warn', args });
+            originalConsole.warn.apply(console, args);
+        };
+        
+        console.info = function(...args) {
+            infos.push({ type: 'info', args });
+            originalConsole.info.apply(console, args);
+        };
+        
+        // تنفيذ الكود
+        const result = eval(code);
+        
+        // استعادة console الأصلي
+        console.log = originalConsole.log;
+        console.error = originalConsole.error;
+        console.warn = originalConsole.warn;
+        console.info = originalConsole.info;
+        
+        // عرض النتائج
+        displayResults(logs, errors, warnings, infos, result, outputElement);
+        showMessage('تم تنفيذ الكود بنجاح! ✅', 'success');
+        
+    } catch (error) {
+        displayError(error, outputElement);
+        showMessage('حدث خطأ أثناء التنفيذ ❌', 'error');
     }
+}
+
+function displayResults(logs, errors, warnings, infos, result, outputElement) {
+    let html = '<div class="slide-in">';
     
-    // عرض القيمة المعادة من الكود
-    if (returnValue !== undefined) {
-        html += `<div class="success message pulse">
-            <i class="fas fa-arrow-right"></i>
-            <strong>القيمة المعادة:</strong>
-            <div style="margin-top: 5px; padding: 10px; background: #e8f5e9; border-radius: 5px; direction: ltr;">
-                ${formatOutput(returnValue)}
+    // عرض جميع أنواع الإخراج
+    const allOutputs = [
+        { data: logs, title: 'الإخراج', icon: 'check-circle', color: '#28a745', className: 'success' },
+        { data: errors, title: 'الأخطاء', icon: 'exclamation-circle', color: '#dc3545', className: 'error' },
+        { data: warnings, title: 'تحذيرات', icon: 'exclamation-triangle', color: '#f59e0b', className: 'warning' },
+        { data: infos, title: 'معلومات', icon: 'info-circle', color: '#17a2b8', className: 'info' }
+    ];
+    
+    allOutputs.forEach(outputType => {
+        if (outputType.data.length > 0) {
+            html += `
+                <div class="${outputType.className} message">
+                    <i class="fas fa-${outputType.icon}"></i>
+                    <strong>${outputType.title} (${outputType.data.length})</strong>
+                </div>
+            `;
+            
+            outputType.data.forEach(item => {
+                html += `
+                    <div class="output-line" style="border-left-color: ${outputType.color}">
+                        ${item.args.map(arg => formatOutput(arg)).join(' ')}
+                    </div>
+                `;
+            });
+        }
+    });
+    
+    html += '</div>';
+    
+    // عرض القيمة المعادة
+    if (result !== undefined) {
+        html += `
+            <div class="success message pulse">
+                <i class="fas fa-arrow-right"></i>
+                <strong>القيمة المعادة:</strong>
+                <div class="return-value">
+                    ${formatOutput(result)}
+                </div>
             </div>
-        </div>`;
+        `;
     }
     
     // إضافة إحصائيات
-    const totalOutputs = logs.length + errors.length + warnings.length;
-    html += `<div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; text-align: center;">
-        <strong>📊 الإحصائيات:</strong>
-        <div style="display: flex; justify-content: space-around; margin-top: 10px;">
-            <span style="color: #28a745;">✅ ${logs.length} إخراج</span>
-            <span style="color: #dc3545;">❌ ${errors.length} خطأ</span>
-            <span style="color: #f59e0b;">⚠️ ${warnings.length} تحذير</span>
+    const totalOutputs = logs.length + errors.length + warnings.length + infos.length;
+    html += `
+        <div class="statistics">
+            <strong>📊 الإحصائيات:</strong>
+            <div class="stats-grid">
+                <span style="color: #28a745;">✅ ${logs.length} إخراج</span>
+                <span style="color: #dc3545;">❌ ${errors.length} خطأ</span>
+                <span style="color: #f59e0b;">⚠️ ${warnings.length} تحذير</span>
+                <span style="color: #17a2b8;">ℹ️ ${infos.length} معلومات</span>
+            </div>
         </div>
-    </div>`;
+    `;
     
-    output.innerHTML = html;
-    output.scrollTop = 0;
+    outputElement.innerHTML = html;
+    outputElement.scrollTop = 0;
 }
 
-// عرض الأخطاء
-function displayError(error) {
-    const output = document.getElementById('output');
-    
+function displayError(error, outputElement) {
     const html = `
         <div class="error message slide-in">
             <i class="fas fa-bug"></i>
@@ -871,166 +781,364 @@ function displayError(error) {
             <p>${error.name}: ${error.message}</p>
         </div>
         
-        <div style="margin: 15px 0; padding: 15px; background: #fef5f5; border-radius: 8px; direction: ltr;">
+        <div class="error-details">
             <strong>تفاصيل الخطأ:</strong>
-            <pre style="margin-top: 10px; color: #dc3545; overflow-x: auto;">${error.stack || 'لا توجد تفاصيل إضافية'}</pre>
+            <pre>${error.stack || 'لا توجد تفاصيل إضافية'}</pre>
         </div>
         
         <div class="info message">
             <i class="fas fa-lightbulb"></i>
             <strong>نصائح للحل:</strong>
-            <ul style="margin-top: 10px; padding-right: 15px;">
+            <ul>
                 <li>تأكد من صيغة الكود</li>
                 <li>تحقق من الأقواس والنقاط</li>
                 <li>تأكد من تعريف المتغيرات قبل استخدامها</li>
+                <li>تحقق من أسماء الدوال والمتغيرات</li>
             </ul>
         </div>
     `;
     
-    output.innerHTML = html;
-}
-
-// تنسيق الإخراج
-function formatOutput(value) {
-    if (value === null) return '<span style="color: #777;">null</span>';
-    if (value === undefined) return '<span style="color: #777;">undefined</span>';
-    
-    if (typeof value === 'object') {
-        try {
-            if (Array.isArray(value)) {
-                return `[${value.map(item => formatOutput(item)).join(', ')}]`;
-            }
-            return JSON.stringify(value, null, 2)
-                .replace(/\n/g, '<br>')
-                .replace(/ /g, '&nbsp;');
-        } catch {
-            return String(value);
-        }
-    }
-    
-    if (typeof value === 'string') {
-        return `"${value}"`;
-    }
-    
-    if (typeof value === 'number') {
-        return `<span style="color: #2980b9;">${value}</span>`;
-    }
-    
-    if (typeof value === 'boolean') {
-        return `<span style="color: #e74c3c;">${value}</span>`;
-    }
-    
-    return String(value);
-}
-
-// مسح المحرر
-function clearCode() {
-    if (confirm('هل تريد مسح الكود؟')) {
-        document.getElementById('code-input').value = '';
-        document.getElementById('output').innerHTML = `
-            <div class="info message fade-in">
-                <i class="fas fa-info-circle"></i>
-                <strong>المحرر نظيف</strong>
-                <p>اكتب كود JavaScript جديد واضغط على "تشغيل الكود"</p>
-            </div>
-        `;
-        
-        // أنيميشن للزر
-        const clearBtn = document.querySelector('.clear-btn');
-        clearBtn.classList.add('shake-animation');
-        setTimeout(() => clearBtn.classList.remove('shake-animation'), 500);
-        
-        showMessage('تم مسح المحرر', 'success');
-        
-        document.getElementById('status').textContent = 'جاهز';
-        document.getElementById('status').style.color = '#27ae60';
-        
-        // مسح من الذاكرة
-        localStorage.removeItem('lastCode');
-    }
+    outputElement.innerHTML = html;
 }
 
 // =============================================
-// 6. وظائف الرسائل والإشعارات
+// 7. وظائف الأمثلة
 // =============================================
-
-// إظهار رسالة عابرة
-function showMessage(text, type) {
-    // إزالة أي رسالة سابقة
-    const existingMessage = document.querySelector('.temp-message');
-    if (existingMessage) {
-        existingMessage.remove();
+function openExamplesModal() {
+    const modal = document.getElementById('examplesModal');
+    const container = document.getElementById('examplesContainer');
+    
+    if (!modal || !container) return;
+    
+    // تعبئة الأمثلة
+    container.innerHTML = '';
+    examplesLibrary.forEach(example => {
+        const card = createExampleCard(example);
+        container.appendChild(card);
+    });
+    
+    // إظهار النافذة
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    modal.classList.add('fade-in');
+    
+    // منع التمرير على الجوال
+    if (isTouchDevice) {
+        document.addEventListener('touchmove', preventModalBackgroundScroll, { passive: false });
     }
-    
-    // إنشاء الرسالة الجديدة
-    const message = document.createElement('div');
-    message.className = `temp-message ${type} message pulse`;
-    message.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-        min-width: 300px;
-        animation: slideIn 0.3s ease-out;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        border-radius: 10px;
-    `;
-    
-    let icon = 'info-circle';
-    if (type === 'success') icon = 'check-circle';
-    if (type === 'error') icon = 'exclamation-circle';
-    
-    message.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <i class="fas fa-${icon}" style="font-size: 20px;"></i>
-            <span>${text}</span>
+}
+
+function createExampleCard(example) {
+    const card = document.createElement('div');
+    card.className = 'example-card';
+    card.innerHTML = `
+        <h4><i class="fas fa-code"></i> ${example.title}</h4>
+        <p>${example.description}</p>
+        <div class="example-tags">
+            <span class="tag ${example.level}">${example.category}</span>
+            ${example.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
         </div>
     `;
     
+    // إضافة مستمع الأحداث
+    const eventType = isTouchDevice ? 'touchstart' : 'click';
+    card.addEventListener(eventType, function(e) {
+        if (isTouchDevice) e.preventDefault();
+        selectExample(example);
+    });
+    
+    if (isTouchDevice) {
+        card.style.touchAction = 'manipulation';
+    }
+    
+    return card;
+}
+
+function selectExample(example) {
+    const codeInput = document.getElementById('code-input');
+    if (!codeInput) return;
+    
+    codeInput.value = example.code;
+    closeExamplesModal();
+    
+    showMessage(`تم تحميل مثال: ${example.title}`, 'success');
+    animateElement('.editor-box', 'glow-animation');
+    
+    updateStatus('معدل', '#f39c12');
+    saveCurrentCode();
+}
+
+function closeExamplesModal() {
+    const modal = document.getElementById('examplesModal');
+    if (!modal) return;
+    
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    modal.classList.remove('fade-in');
+    
+    if (isTouchDevice) {
+        document.removeEventListener('touchmove', preventModalBackgroundScroll);
+    }
+}
+
+function preventModalBackgroundScroll(e) {
+    const modal = document.getElementById('examplesModal');
+    if (modal && modal.style.display === 'flex') {
+        e.preventDefault();
+    }
+}
+
+// =============================================
+// 8. وظائف المساعدة والرسائل
+// =============================================
+function showMessage(text, type = 'info') {
+    // إزالة الرسائل القديمة
+    removeExistingMessages();
+    
+    // إنشاء الرسالة الجديدة
+    const message = createMessageElement(text, type);
     document.body.appendChild(message);
     
     // إزالة الرسالة بعد 3 ثوان
-    setTimeout(() => {
-        if (message.parentNode) {
-            message.style.animation = 'fadeOut 0.3s ease-out';
-            setTimeout(() => message.remove(), 300);
-        }
-    }, 3000);
+    setTimeout(() => removeMessage(message), 3000);
 }
 
-// إضافة أنيميشن الرسائل العابرة
-const messageStyles = document.createElement('style');
-messageStyles.textContent = `
-    @keyframes fadeOut {
-        from { opacity: 1; transform: translateX(0); }
-        to { opacity: 0; transform: translateX(20px); }
+function createMessageElement(text, type) {
+    const message = document.createElement('div');
+    message.className = `temp-message ${type} message pulse`;
+    
+    const icons = {
+        success: 'check-circle',
+        error: 'exclamation-circle',
+        warning: 'exclamation-triangle',
+        info: 'info-circle'
+    };
+    
+    const icon = icons[type] || 'info-circle';
+    
+    // تصميم متجاوب
+    message.style.cssText = `
+        position: fixed;
+        ${isTouchDevice ? `
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            padding: 12px;
+            font-size: 14px;
+        ` : `
+            top: 20px;
+            right: 20px;
+            min-width: 300px;
+            padding: 15px;
+        `}
+        z-index: 10000;
+        animation: slideIn 0.3s ease-out;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        border-radius: ${isTouchDevice ? '10px' : '8px'};
+        text-align: ${isTouchDevice ? 'center' : 'left'};
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        backdrop-filter: blur(10px);
+    `;
+    
+    message.innerHTML = `
+        <i class="fas fa-${icon}" style="font-size: 20px;"></i>
+        <span>${text}</span>
+    `;
+    
+    return message;
+}
+
+function removeExistingMessages() {
+    const messages = document.querySelectorAll('.temp-message');
+    messages.forEach(msg => {
+        msg.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => msg.remove(), 300);
+    });
+}
+
+function removeMessage(message) {
+    if (message && message.parentNode) {
+        message.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+            if (message.parentNode) {
+                message.remove();
+            }
+        }, 300);
     }
-`;
-document.head.appendChild(messageStyles);
+}
 
 // =============================================
-// 7. وظائف التخزين والمفاتيح
+// 9. وظائف التخزين
 // =============================================
-
-// حفظ الكود الحالي
 function saveCurrentCode() {
-    const code = document.getElementById('code-input').value;
-    if (code.trim().length > 0) {
-        localStorage.setItem('lastCode', code);
+    const codeInput = document.getElementById('code-input');
+    if (!codeInput) return;
+    
+    const code = codeInput.value.trim();
+    if (code) {
+        try {
+            localStorage.setItem('lastCode', code);
+        } catch (e) {
+            console.warn('تعذر حفظ الكود في localStorage:', e);
+        }
     }
 }
 
-// استرجاع الكود المحفوظ
 function loadSavedCode() {
-    const savedCode = localStorage.getItem('lastCode');
-    if (savedCode) {
-        document.getElementById('code-input').value = savedCode;
-        showMessage('تم استرجاع الكود السابق', 'info');
+    try {
+        const savedCode = localStorage.getItem('lastCode');
+        if (savedCode) {
+            const codeInput = document.getElementById('code-input');
+            if (codeInput) {
+                codeInput.value = savedCode;
+                showMessage('تم استرجاع الكود السابق', 'info');
+            }
+        }
+    } catch (e) {
+        console.warn('تعذر تحميل الكود من localStorage:', e);
     }
 }
 
-// اختصارات لوحة المفاتيح
-document.addEventListener('keydown', function(e) {
+// =============================================
+// 10. وظائف تحسين الجوال
+// =============================================
+function setupMobileOptimizations() {
+    if (!isTouchDevice) return;
+    
+    // منع التكبير بالنقر المزدوج
+    document.addEventListener('touchstart', function(event) {
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+    
+    // تحسين أداء التمرير
+    document.body.style.webkitOverflowScrolling = 'touch';
+    
+    // تحسين الأداء العام
+    document.body.classList.add('touch-device');
+}
+
+function vibrateIfSupported() {
+    if (isTouchDevice && 'vibrate' in navigator) {
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('touchstart', () => {
+                navigator.vibrate(10);
+            }, { passive: true });
+        });
+    }
+}
+
+// =============================================
+// 11. وظائف الأنيميشن والتأثيرات
+// =============================================
+function animateButton(selector, animationClass) {
+    const button = document.querySelector(selector);
+    if (!button) return;
+    
+    button.classList.add(animationClass);
+    setTimeout(() => button.classList.remove(animationClass), 300);
+}
+
+function animateElement(selector, animationClass) {
+    const element = document.querySelector(selector);
+    if (!element) return;
+    
+    element.classList.add(animationClass);
+    setTimeout(() => element.classList.remove(animationClass), 2000);
+}
+
+function updateStatus(text, color) {
+    const statusElement = document.getElementById('status');
+    if (!statusElement) return;
+    
+    statusElement.textContent = text;
+    statusElement.style.color = color;
+}
+
+// =============================================
+// 12. وظائف تنسيق الإخراج
+// =============================================
+function formatOutput(value) {
+    if (value === null) return '<span class="null-value">null</span>';
+    if (value === undefined) return '<span class="undefined-value">undefined</span>';
+    
+    const type = typeof value;
+    
+    switch (type) {
+        case 'string':
+            return `<span class="string-value">"${value}"</span>`;
+        
+        case 'number':
+            return `<span class="number-value">${value}</span>`;
+        
+        case 'boolean':
+            return `<span class="boolean-value">${value}</span>`;
+        
+        case 'object':
+            if (Array.isArray(value)) {
+                const items = value.map(item => formatOutput(item)).join(', ');
+                return `[${items}]`;
+            }
+            
+            try {
+                const json = JSON.stringify(value, null, 2)
+                    .replace(/\n/g, '<br>')
+                    .replace(/ /g, '&nbsp;');
+                return `<pre class="object-value">${json}</pre>`;
+            } catch {
+                return `<span class="object-value">${String(value)}</span>`;
+            }
+        
+        default:
+            return String(value);
+    }
+}
+
+// =============================================
+// 13. وظائف مساعدة إضافية
+// =============================================
+function clearCode() {
+    if (!confirm('هل تريد مسح الكود؟')) return;
+    
+    const codeInput = document.getElementById('code-input');
+    const output = document.getElementById('output');
+    
+    if (!codeInput || !output) return;
+    
+    codeInput.value = '';
+    
+    output.innerHTML = `
+        <div class="info message fade-in">
+            <i class="fas fa-info-circle"></i>
+            <strong>المحرر نظيف</strong>
+            <p>اكتب كود JavaScript جديد واضغط على "تشغيل الكود"</p>
+        </div>
+    `;
+    
+    animateButton('.clear-btn', 'shake-animation');
+    showMessage('تم مسح المحرر', 'success');
+    
+    updateStatus('جاهز', '#27ae60');
+    localStorage.removeItem('lastCode');
+}
+
+function showLoadingIndicator(element) {
+    element.innerHTML = `
+        <div class="loading-indicator">
+            <div class="spinner"></div>
+            <p>جاري تنفيذ الكود...</p>
+        </div>
+    `;
+}
+
+// =============================================
+// 14. اختصارات لوحة المفاتيح
+// =============================================
+function handleKeyboardShortcuts(e) {
     // Ctrl+Enter لتشغيل الكود
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
@@ -1049,86 +1157,25 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
         clearCode();
     }
-});
-
-// تحديث حالة المحرر عند الكتابة
-document.getElementById('code-input').addEventListener('input', function() {
-    document.getElementById('status').textContent = 'معدل';
-    document.getElementById('status').style.color = '#f39c12';
     
-    // عد الأسطر
-    const lines = this.value.split('\n').length;
-    const chars = this.value.length;
-    
-    // تحديث العنوان
-    const title = lines > 1 ? `محرر الكود (${lines} أسطر, ${chars} حرف)` : 'محرر الكود';
-    const editorTitle = document.querySelector('.editor-header span');
-    if (editorTitle) {
-        editorTitle.innerHTML = `<i class="fas fa-code"></i> ${title}`;
-    }
-    
-    // حفظ تلقائي
-    saveCurrentCode();
-});
-
-// حفظ عند الخروج من المحرر
-document.getElementById('code-input').addEventListener('blur', saveCurrentCode);
-
-// =============================================
-// 8. تهيئة النظام النهائية
-// =============================================
-
-// تعيين نسخة الأمثلة في الصفحة الرئيسية
-function setupHomeExamples() {
-    const exampleCodeElement = document.querySelector('.example-code pre');
-    if (exampleCodeElement) {
-        let examplesHTML = '';
-        // أخذ 3 أمثلة عشوائية
-        const randomExamples = [...examplesLibrary]
-            .sort(() => Math.random() - 0.5)
-            .slice(0, 3);
-        
-        randomExamples.forEach(example => {
-            const preview = example.code.split('\n').slice(0, 2).join('\n');
-            examplesHTML += `// ${example.title}\n${preview}\n\n`;
-        });
-        
-        exampleCodeElement.textContent = examplesHTML.trim();
+    // ESC لإغلاق النوافذ
+    if (e.key === 'Escape') {
+        closeExamplesModal();
     }
 }
 
-// تشغيل التهيئة عند تحميل الصفحة
-window.addEventListener('load', function() {
-    setupHomeExamples();
+// =============================================
+// 15. وظائف إعداد واجهة المستخدم
+// =============================================
+function createExamplesModal() {
+    if (document.getElementById('examplesModal')) return;
     
-    // إضافة زر الأمثلة إذا لم يكن موجوداً
-    const controls = document.querySelector('.controls');
-    if (controls && !document.querySelector('.examples-btn')) {
-        const examplesBtn = document.createElement('button');
-        examplesBtn.className = 'btn examples-btn';
-        examplesBtn.innerHTML = '<i class="fas fa-code"></i> أمثلة';
-        examplesBtn.onclick = openExamplesModal;
-        
-        // إضافة الزر بعد زر التشغيل
-        const runBtn = document.querySelector('.run-btn');
-        if (runBtn) {
-            runBtn.parentNode.insertBefore(examplesBtn, runBtn.nextSibling);
-        } else {
-            controls.appendChild(examplesBtn);
-        }
-    }
-    
-    console.log('🚀 نظام مشغل JavaScript جاهز للعمل!');
-});
-
-// إضافة نافذة الأمثلة إذا لم تكن موجودة
-if (!document.getElementById('examplesModal')) {
     const modalHTML = `
     <div id="examplesModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i class="fas fa-code"></i> مكتبة الأمثلة (${examplesLibrary.length} مثال)</h2>
-                <button class="close-modal" onclick="closeExamplesModal()">&times;</button>
+                <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body" id="examplesContainer">
                 <!-- الأمثلة ستظهر هنا -->
@@ -1137,4 +1184,205 @@ if (!document.getElementById('examplesModal')) {
     </div>`;
     
     document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // إعداد إغلاق النافذة
+    setupModalCloseEvents();
 }
+
+function setupModalCloseEvents() {
+    const modal = document.getElementById('examplesModal');
+    if (!modal) return;
+    
+    // إغلاق بالزر
+    const closeBtn = modal.querySelector('.close-modal');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeExamplesModal);
+    }
+    
+    // إغلاق بالنقر خارج النافذة
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeExamplesModal();
+        }
+    });
+}
+
+function addExamplesButton() {
+    const controls = document.querySelector('.controls');
+    if (!controls) return;
+    
+    const existingBtn = controls.querySelector('.examples-btn');
+    if (existingBtn) return;
+    
+    const examplesBtn = document.createElement('button');
+    examplesBtn.className = 'btn examples-btn';
+    examplesBtn.innerHTML = '<i class="fas fa-code"></i> أمثلة';
+    
+    examplesBtn.addEventListener('click', openExamplesModal);
+    
+    // إضافة بعد زر التشغيل
+    const runBtn = controls.querySelector('.run-btn');
+    if (runBtn) {
+        runBtn.parentNode.insertBefore(examplesBtn, runBtn.nextSibling);
+    } else {
+        controls.appendChild(examplesBtn);
+    }
+}
+
+function displayRandomExamples() {
+    const exampleCodeElement = document.querySelector('.example-code pre');
+    if (!exampleCodeElement) return;
+    
+    // أخذ 3 أمثلة عشوائية
+    const randomExamples = [...examplesLibrary]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+    
+    let examplesHTML = '';
+    randomExamples.forEach(example => {
+        const preview = example.code.split('\n').slice(0, 2).join('\n');
+        examplesHTML += `// ${example.title}\n${preview}\n\n`;
+    });
+    
+    exampleCodeElement.textContent = examplesHTML.trim();
+    
+    // إعداد النقر على الأمثلة
+    if (isTouchDevice) {
+        exampleCodeElement.addEventListener('touchstart', handleExampleClick, { passive: false });
+    } else {
+        exampleCodeElement.addEventListener('click', handleExampleClick);
+    }
+}
+
+function handleExampleClick(e) {
+    if (isTouchDevice) e.preventDefault();
+    
+    const exampleText = this.textContent;
+    const codeInput = document.getElementById('code-input');
+    
+    if (codeInput) {
+        codeInput.value = exampleText;
+        showMessage('تم نسخ المثال إلى المحرر', 'success');
+        
+        this.classList.add('pulse');
+        setTimeout(() => this.classList.remove('pulse'), 300);
+        
+        updateStatus('معدل', '#f39c12');
+        saveCurrentCode();
+    }
+}
+
+// =============================================
+// 16. تهيئة CSS الإضافية
+// =============================================
+function addAdditionalStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .output-line {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 3px solid;
+            direction: ltr;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .return-value {
+            margin-top: 5px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            direction: ltr;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .statistics {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .loading-indicator {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .error-details {
+            margin: 15px 0;
+            padding: 15px;
+            background: #fef5f5;
+            border-radius: 8px;
+            direction: ltr;
+        }
+        
+        .error-details pre {
+            margin-top: 10px;
+            color: #dc3545;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .string-value { color: #28a745; }
+        .number-value { color: #2980b9; }
+        .boolean-value { color: #e74c3c; }
+        .null-value, .undefined-value { color: #777; font-style: italic; }
+        .object-value { color: #9c27b0; }
+        
+        .touch-device .btn {
+            min-height: 44px;
+            min-width: 44px;
+        }
+    `;
+    
+    document.head.appendChild(style);
+}
+
+// =============================================
+// 17. التهيئة النهائية
+// =============================================
+// إضافة CSS الإضافية
+addAdditionalStyles();
+
+// تشغيل vibration إذا متاح
+if (isTouchDevice) {
+    window.addEventListener('load', vibrateIfSupported);
+}
+
+console.log('🚀 نظام مشغل JavaScript جاهز للعمل!');
