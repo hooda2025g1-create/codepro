@@ -1468,3 +1468,309 @@ if (isTouchDevice) {
 }
 
 console.log('🚀 نظام مشغل JavaScript جاهز للعمل!');
+
+// =============================================
+// 18. تحسينات إضافية للجوال والنافذة المنبثقة
+// =============================================
+function enhanceMobileModalExperience() {
+    if (!isTouchDevice) return;
+    
+    const modal = document.getElementById('examplesModal');
+    if (!modal) return;
+    
+    // تحسين تجربة النافذة المنبثقة على الجوال
+    modal.style.touchAction = 'none';
+    
+    // إعداد خاصية overscroll-behavior
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.style.overscrollBehavior = 'contain';
+    }
+    
+    // إعداد معالجة اللمس لزر الإغلاق
+    const closeBtn = modal.querySelector('.close-modal');
+    if (closeBtn) {
+        closeBtn.addEventListener('touchstart', function(e) {
+            e.stopPropagation();
+            this.style.transform = 'scale(0.9)';
+        }, { passive: true });
+        
+        closeBtn.addEventListener('touchend', function(e) {
+            this.style.transform = 'scale(1)';
+            closeExamplesModal();
+            e.stopPropagation();
+        }, { passive: true });
+        
+        closeBtn.addEventListener('touchcancel', function() {
+            this.style.transform = 'scale(1)';
+        }, { passive: true });
+    }
+    
+    // منع التكبير على المدخلات
+    const codeInput = document.getElementById('code-input');
+    if (codeInput) {
+        codeInput.addEventListener('touchstart', function() {
+            this.style.fontSize = '16px'; // منع التكبير التلقائي
+        }, { passive: true });
+    }
+    
+    // تحسين حجم الخط للجوال
+    if (window.innerWidth < 768) {
+        document.querySelectorAll('.example-card h4').forEach(h4 => {
+            h4.style.fontSize = '16px';
+        });
+        
+        document.querySelectorAll('.example-card p').forEach(p => {
+            p.style.fontSize = '14px';
+        });
+    }
+}
+
+// =============================================
+// 19. تحسين أداء التمرير
+// =============================================
+function setupSmoothScrolling() {
+    // تحسين أداء التمرير للنافذة المنبثقة
+    const modalBody = document.querySelector('.modal-body');
+    if (modalBody) {
+        modalBody.style.willChange = 'transform';
+        modalBody.style.backfaceVisibility = 'hidden';
+        modalBody.style.perspective = '1000px';
+    }
+    
+    // تحسين أداء التمرير للمخرجات
+    const output = document.getElementById('output');
+    if (output) {
+        output.style.willChange = 'transform';
+        output.style.backfaceVisibility = 'hidden';
+    }
+}
+
+// =============================================
+// 20. إعدادات تحميل إضافية
+// =============================================
+function setupAdditionalLoaders() {
+    // إضافة مؤشر تحميل عند فتح النافذة
+    const originalOpenExamplesModal = openExamplesModal;
+    openExamplesModal = function() {
+        showMessage('جاري تحميل الأمثلة...', 'info');
+        setTimeout(() => {
+            originalOpenExamplesModal.call(this);
+        }, 100);
+    };
+    
+    // تحسين أداء التنفيذ للجوال
+    const originalRunCode = runCode;
+    runCode = function() {
+        if (isTouchDevice) {
+            // تقليل وقت الانتظار للجوال
+            executionTimeout = setTimeout(() => {
+                const codeInput = document.getElementById('code-input');
+                const output = document.getElementById('output');
+                if (codeInput && output) {
+                    executeJavaScriptCode(codeInput.value.trim(), output);
+                }
+                isRunning = false;
+                updateStatus('جاهز', '#27ae60');
+            }, 50);
+            
+            isRunning = true;
+            updateStatus('جاري التشغيل...', '#f39c12');
+            showLoadingIndicator(document.getElementById('output'));
+        } else {
+            originalRunCode.call(this);
+        }
+    };
+}
+
+// =============================================
+// 21. تحديث تهيئة النظام
+// =============================================
+// في نهاية DOMContentLoaded، أضف:
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("✅ مشغل JavaScript جاهز!");
+    
+    initializeSystem();
+    setupEventListeners();
+    loadSavedCode();
+    
+    // إضافة التحسينات الجديدة
+    enhanceMobileModalExperience();
+    setupSmoothScrolling();
+    setupAdditionalLoaders();
+    
+    // تحسينات إضافية للجوال
+    if (isTouchDevice) {
+        // إضافة تأثيرات للجوال
+        document.body.classList.add('mobile-optimized');
+        
+        // تحسين أزرار اللمس
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => {
+            btn.style.transition = 'all 0.15s';
+            btn.addEventListener('touchstart', function() {
+                this.style.opacity = '0.8';
+                this.style.transform = 'translateY(2px)';
+            });
+            btn.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    }
+});
+
+// =============================================
+// 22. CSS إضافي للتحسينات
+// =============================================
+function addMobileOptimizationsCSS() {
+    const mobileCSS = document.createElement('style');
+    mobileCSS.textContent = `
+        /* تحسينات للجوال */
+        .mobile-optimized .btn {
+            min-height: 48px;
+            min-width: 48px;
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+        
+        .mobile-optimized .example-card {
+            padding: 16px;
+            margin: 8px 0;
+            border-radius: 12px;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .mobile-optimized .example-card:active {
+            transform: scale(0.98);
+            background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+        }
+        
+        .mobile-optimized .modal-overlay {
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: none;
+        }
+        
+        .mobile-optimized .modal-content {
+            max-height: 85vh;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .mobile-optimized .modal-body {
+            padding-bottom: 20px;
+        }
+        
+        /* تحسين شريط التمرير للجوال */
+        .mobile-optimized ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .mobile-optimized ::-webkit-scrollbar-thumb {
+            background: rgba(155, 89, 182, 0.5);
+            border-radius: 4px;
+        }
+        
+        .mobile-optimized ::-webkit-scrollbar-thumb:hover {
+            background: rgba(155, 89, 182, 0.7);
+        }
+        
+        /* تحسين ظهور النافذة على الجوال */
+        @media (max-width: 767px) {
+            .modal-content {
+                animation: modalSlideUp 0.3s ease-out;
+            }
+            
+            @keyframes modalSlideUp {
+                from {
+                    transform: translateY(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            
+            .modal-header {
+                padding: 20px;
+                position: relative;
+            }
+            
+            .close-modal {
+                position: absolute;
+                top: 15px;
+                left: 15px;
+                right: auto;
+                background: rgba(255, 255, 255, 0.2);
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+            }
+            
+            .modal-header h2 {
+                font-size: 20px;
+                text-align: center;
+                padding: 0 40px;
+            }
+        }
+        
+        /* تحسين التمرير اللطيف */
+        .smooth-scroll {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* تحسين الأداء */
+        .performance-optimized {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+    `;
+    
+    document.head.appendChild(mobileCSS);
+}
+
+// =============================================
+// 23. التهيئة النهائية المحسنة
+// =============================================
+// إضافة CSS للتحسينات
+addAdditionalStyles();
+addMobileOptimizationsCSS();
+
+// تشغيل vibration إذا متاح
+if (isTouchDevice) {
+    window.addEventListener('load', function() {
+        // تأخير بسيط لتحسين الأداء
+        setTimeout(vibrateIfSupported, 500);
+    });
+}
+
+// تسجيل معلومات التحميل
+console.log('🚀 نظام مشغل JavaScript جاهز للعمل مع تحسينات الجوال المتقدمة!');
+console.log('📱 وضع الجهاز:', isTouchDevice ? 'جوال' : 'كمبيوتر');
+console.log('🖥️ حجم الشاشة:', window.innerWidth + 'x' + window.innerHeight);
+
+// تحسين أداء التنفيذ
+if (window.requestIdleCallback) {
+    requestIdleCallback(() => {
+        console.log('⚡ تحسينات الأداء جاهزة');
+    });
+}
+
+// تحديث مستمر لحالة النظام
+setInterval(() => {
+    const memory = window.performance && window.performance.memory;
+    if (memory) {
+        const usedMB = Math.round(memory.usedJSHeapSize / 1048576);
+        const totalMB = Math.round(memory.totalJSHeapSize / 1048576);
+        if (usedMB > totalMB * 0.8) {
+            console.warn('⚠️ استخدام عالي للذاكرة:', usedMB + 'MB / ' + totalMB + 'MB');
+        }
+    }
+}, 30000); // كل 30 ثانية
