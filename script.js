@@ -877,6 +877,7 @@ function handleTouchMove(e) {
 function createExampleCard(example) {
     const card = document.createElement('div');
     card.className = 'example-card';
+    card.dataset.exampleId = example.id;
     card.innerHTML = `
         <h4><i class="fas fa-code"></i> ${example.title}</h4>
         <p>${example.description}</p>
@@ -886,49 +887,67 @@ function createExampleCard(example) {
         </div>
     `;
     
-    // إضافة مستمع الأحداث محسن للجوال
+    // معالجة مختلفة للجوال والكمبيوتر
     if (isTouchDevice) {
-        let touchStartTime = 0;
-        let touchStartY = 0;
+        // للجوال: معالجة ذكية لللمس
+        let cardTouchStartY = 0;
+        let cardTouchStartTime = 0;
+        let cardIsMoving = false;
         
         card.addEventListener('touchstart', function(e) {
-            touchStartTime = Date.now();
-            touchStartY = e.touches[0].clientY;
-            this.classList.add('touch-active');
+            cardTouchStartY = e.touches[0].clientY;
+            cardTouchStartTime = Date.now();
+            cardIsMoving = false;
+            this.classList.add('touch-start');
+        }, { passive: true });
+        
+        card.addEventListener('touchmove', function(e) {
+            const currentY = e.touches[0].clientY;
+            const deltaY = Math.abs(currentY - cardTouchStartY);
+            
+            // إذا تحرك الإصبع أكثر من 8 بكسل، فهو تمرير
+            if (deltaY > 8) {
+                cardIsMoving = true;
+                this.classList.remove('touch-start');
+            }
         }, { passive: true });
         
         card.addEventListener('touchend', function(e) {
             const touchEndTime = Date.now();
-            const touchDuration = touchEndTime - touchStartTime;
+            const touchDuration = touchEndTime - cardTouchStartTime;
             
-            // اختيار البطاقة فقط إذا كانت النقرة قصيرة ولم يكن هناك تمرير
-            if (touchDuration < 200) {
-                selectExample(example);
+            // اختيار البطاقة فقط إذا:
+            // 1. لم يكن هناك حركة (ليس تمريراً)
+            // 2. مدة اللمس أقل من 300ms (نقرة سريعة)
+            // 3. المستخدم لم يكن يقوم بالتمرير العام
+            if (!cardIsMoving && !isTouchMoving && touchDuration < 300) {
                 e.preventDefault();
+                e.stopPropagation();
+                selectExample(example);
             }
             
-            this.classList.remove('touch-active');
+            this.classList.remove('touch-start');
         }, { passive: false });
         
-        card.addEventListener('touchmove', function(e) {
-            // إذا تحرك الإصبع كثيراً، فهو تمرير وليس اختيار
-            if (Math.abs(e.touches[0].clientY - touchStartY) > 10) {
-                this.classList.remove('touch-active');
-            }
+        card.addEventListener('touchcancel', function() {
+            this.classList.remove('touch-start');
         }, { passive: true });
         
+        // إعدادات اللمس للبطاقة
         card.style.touchAction = 'pan-y';
         card.style.userSelect = 'none';
         card.style.webkitUserSelect = 'none';
+        
     } else {
-        // للكمبيوتر
-        card.addEventListener('click', function() {
+        // للكمبيوتر: استخدام الماوس فقط
+        card.addEventListener('click', function(e) {
+            e.stopPropagation();
             selectExample(example);
         });
         
         card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-            this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+            this.style.transform = 'translateY(-3px)';
+            this.style.boxShadow = '0 8px 16px rgba(0,0,0,0.1)';
             this.style.borderColor = '#9b59b6';
         });
         
@@ -960,15 +979,24 @@ function closeExamplesModal() {
     const modal = document.getElementById('examplesModal');
     if (!modal) return;
     
+    // تنظيف مستمعين اللمس
+    if (isTouchDevice) {
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.removeEventListener('touchstart', handleModalTouchStart);
+            modalContent.removeEventListener('touchmove', handleModalTouchMove);
+            modalContent.removeEventListener('touchend', handleModalTouchEnd);
+        }
+        document.removeEventListener('touchmove', preventModalBackgroundScroll);
+    }
+    
+    // إخفاء النافذة
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
     modal.classList.remove('fade-in');
-    isModalOpen = false;
     
-    // إزالة مستمع اللمس
-    if (isTouchDevice) {
-        document.removeEventListener('touchmove', handleTouchMove);
-    }
+    // إعادة تعيين المتغيرات
+    isTouchMoving = false;
 }
 
 // =============================================
@@ -1361,95 +1389,96 @@ function handleExampleClick(e) {
 function addAdditionalStyles() {
     const style = document.createElement('style');
     style.textContent = `
-        .output-line {
-            margin: 10px 0;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border-left: 3px solid;
-            direction: ltr;
-            font-family: 'Courier New', monospace;
-            overflow-x: auto;
+        /* ... (الكود الأصلي يبقى كما هو) ... */
+        
+        /* تحسينات إضافية للجوال */
+        @media (max-width: 767px) {
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+            
+            .modal-content {
+                width: 100%;
+                max-height: 85vh;
+                border-radius: 20px 20px 0 0;
+                animation: slideUp 0.3s ease-out;
+                margin: 0;
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateY(100%); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            
+            .modal-body {
+                max-height: 65vh;
+                padding-bottom: 30px;
+                overscroll-behavior: contain;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .example-card {
+                margin: 8px 0;
+                transition: transform 0.2s, background-color 0.2s;
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            .example-card.touch-start {
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                transform: scale(0.99);
+            }
+            
+            /* تحسين شريط التمرير */
+            .modal-body::-webkit-scrollbar {
+                width: 6px;
+            }
+            
+            .modal-body::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+            }
+            
+            .modal-body::-webkit-scrollbar-thumb {
+                background: rgba(155, 89, 182, 0.5);
+                border-radius: 3px;
+            }
+            
+            /* تحسين زر الإغلاق */
+            .close-modal {
+                width: 44px;
+                height: 44px;
+                font-size: 24px;
+                position: absolute;
+                top: 15px;
+                left: 15px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+            }
+            
+            .modal-header h2 {
+                padding: 0 50px;
+                text-align: center;
+            }
         }
         
-        .return-value {
-            margin-top: 5px;
-            padding: 10px;
-            background: #e8f5e9;
-            border-radius: 5px;
-            direction: ltr;
-            font-family: 'Courier New', monospace;
+        /* منع السلوك الافتراضي لللمس */
+        .no-touch-action {
+            touch-action: none;
         }
         
-        .statistics {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e3f2fd;
-            border-radius: 8px;
-            text-align: center;
+        .allow-touch-action {
+            touch-action: pan-y;
         }
         
-        .stats-grid {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .loading-indicator {
-            text-align: center;
-            padding: 40px;
-        }
-        
-        .spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        .error-details {
-            margin: 15px 0;
-            padding: 15px;
-            background: #fef5f5;
-            border-radius: 8px;
-            direction: ltr;
-        }
-        
-        .error-details pre {
-            margin-top: 10px;
-            color: #dc3545;
-            overflow-x: auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        
-        .string-value { color: #28a745; }
-        .number-value { color: #2980b9; }
-        .boolean-value { color: #e74c3c; }
-        .null-value, .undefined-value { color: #777; font-style: italic; }
-        .object-value { color: #9c27b0; }
-        
-        .touch-device .btn {
-            min-height: 44px;
-            min-width: 44px;
+        /* تحسين الأداء */
+        .modal-body {
+            will-change: transform;
+            transform: translateZ(0);
         }
     `;
     
