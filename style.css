@@ -1781,3 +1781,40 @@ body {
 .feature:nth-child(3) { animation-delay: 0.3s; }
 .feature:nth-child(4) { animation-delay: 0.4s; }
 .feature:nth-child(5) { animation-delay: 0.5s; }
+
+/* ====== تحسينات أنيميشن الجوال ====== */
+@media (max-width: 768px) {
+    /* إبطاء أنيميشن الشعار للجوال */
+    .welcome-logo {
+        animation: float 5s ease-in-out infinite; /* زيادة من 4 إلى 5 ثواني */
+    }
+    
+    .welcome-logo i {
+        animation: spin 30s linear infinite; /* إبطاء الدوران */
+    }
+    
+    .welcome-name {
+        animation: gradientShift 6s ease infinite, nameReveal 2.5s ease forwards;
+        /* زيادة مدة تدرج اللون */
+    }
+    
+    .welcome-name::after {
+        animation: underlineExpand 2s ease 1.8s forwards;
+        /* زيادة مدة الخط وتأخيره أكثر */
+    }
+    
+    .welcome-subtitle {
+        animation: subtitleFadeIn 1.5s ease 2.5s forwards;
+        /* زيادة المدة والتأخير */
+    }
+    
+    .loading-bar {
+        animation: loadingBarAppear 1s ease 3s forwards;
+        /* زيادة المدة والتأخير */
+    }
+    
+    .loading-progress {
+        animation: loadingProgress 4s ease 3.5s forwards;
+        /* زيادة مدة التحميل */
+    }
+}
