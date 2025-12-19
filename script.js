@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // =============================================
-// 4. وظائف شاشة الترحيب (محسنة للجوال)
+// 4. وظائف شاشة الترحيب (محسنة)
 // =============================================
 function initializeWelcomeScreen() {
     const welcomeScreen = document.getElementById('welcomeScreen');
@@ -575,21 +575,6 @@ function initializeWelcomeScreen() {
         return;
     }
     
-    // حساب وقت إضافي للجوال
-    let mobileBonus = 0;
-    if (isTouchDevice) {
-        // الجوال: زيادة الوقت حسب حجم الشاشة
-        if (window.innerWidth < 480) { // شاشات صغيرة جداً
-            mobileBonus = 1500; // +1.5 ثانية
-        } else if (window.innerWidth < 768) { // جوال عادي
-            mobileBonus = 1200; // +1.2 ثانية
-        } else { // تابلت
-            mobileBonus = 800; // +0.8 ثانية
-        }
-        
-        console.log('📱 تأخير إضافي للجوال:', mobileBonus + 'ms');
-    }
-    
     // التحقق إذا كان المستخدم قد زار الموقع من قبل
     const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
     
@@ -597,106 +582,18 @@ function initializeWelcomeScreen() {
         // إذا زار من قبل، تظهر الشاشة لفترة متوسطة
         setTimeout(() => {
             hideWelcomeScreen();
-        }, 5500 + mobileBonus); // إضافة التأخير للجوال
+        }, 5500); // زيادة المدة من 1500 إلى 2500
     } else {
         // أول زيارة، تظهر لفترة أطول
         localStorage.setItem('hasVisitedBefore', 'true');
         setTimeout(() => {
             hideWelcomeScreen();
-        }, 5500 + mobileBonus); // إضافة التأخير للجوال
+        }, 5500); // زيادة المدة من 3000 إلى 4000
     }
     
     // إضافة تأثيرات تفاعلية إضافية
     setupWelcomeInteractions();
 }
-
-function hideWelcomeScreen() {
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    
-    if (!welcomeScreen) return;
-    
-    // إضافة تأخير إضافي للخروج على الجوال
-    let exitDelay = isTouchDevice ? 1000 : 800; // زيادة وقت الخروج للجوال
-    
-    // إضافة class للخروج
-    welcomeScreen.classList.add('fade-out');
-    
-    // إزالة الشاشة بعد انتهاء الأنيميشن
-    setTimeout(() => {
-        welcomeScreen.style.display = 'none';
-        
-        // إظهار المحتوى الرئيسي بسلاسة
-        const mainContent = document.querySelector('.main-container');
-        if (mainContent) {
-            mainContent.style.opacity = '0';
-            mainContent.style.display = 'block';
-            
-            setTimeout(() => {
-                mainContent.style.transition = 'opacity 0.8s ease';
-                mainContent.style.opacity = '1';
-                
-                // إضافة أنيميشن إضافية للمحتوى
-                animateMainContent();
-            }, 100);
-        }
-        
-        // إظهار زر تبديل الثيم بسلاسة
-        const themeToggle = document.querySelector('.theme-toggle-container');
-        if (themeToggle) {
-            themeToggle.style.opacity = '0';
-            setTimeout(() => {
-                themeToggle.style.transition = 'opacity 0.8s ease';
-                themeToggle.style.opacity = '1';
-            }, 300);
-        }
-        
-    }, exitDelay); // وقت أنيميشن الخروج (أطول للجوال)
-}
-
-function hideWelcomeScreen() {
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    
-    if (!welcomeScreen) return;
-    
-    // إضافة تأخير إضافي للخروج على الجوال
-    let exitDelay = isTouchDevice ? 1000 : 800; // زيادة وقت الخروج للجوال
-    
-    // إضافة class للخروج
-    welcomeScreen.classList.add('fade-out');
-    
-    // إزالة الشاشة بعد انتهاء الأنيميشن
-    setTimeout(() => {
-        welcomeScreen.style.display = 'none';
-        
-        // إظهار المحتوى الرئيسي بسلاسة
-        const mainContent = document.querySelector('.main-container');
-        if (mainContent) {
-            mainContent.style.opacity = '0';
-            mainContent.style.display = 'block';
-            
-            setTimeout(() => {
-                mainContent.style.transition = 'opacity 0.8s ease';
-                mainContent.style.opacity = '1';
-                
-                // إضافة أنيميشن إضافية للمحتوى
-                animateMainContent();
-            }, 100);
-        }
-        
-        // إظهار زر تبديل الثيم بسلاسة
-        const themeToggle = document.querySelector('.theme-toggle-container');
-        if (themeToggle) {
-            themeToggle.style.opacity = '0';
-            setTimeout(() => {
-                themeToggle.style.transition = 'opacity 0.8s ease';
-                themeToggle.style.opacity = '1';
-            }, 300);
-        }
-        
-    }, exitDelay); // وقت أنيميشن الخروج (أطول للجوال)
-}
-    
-
 
 function hideWelcomeScreen() {
     const welcomeScreen = document.getElementById('welcomeScreen');
