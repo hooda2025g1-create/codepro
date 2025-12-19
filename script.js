@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // =============================================
-// 4. وظائف شاشة الترحيب (محسنة)
+// 4. وظائف شاشة الترحيب (محسنة للجوال)
 // =============================================
 function initializeWelcomeScreen() {
     const welcomeScreen = document.getElementById('welcomeScreen');
@@ -575,6 +575,9 @@ function initializeWelcomeScreen() {
         return;
     }
     
+    // تحديد وقت إضافي للجوال
+    let mobileDelay = isTouchDevice ? 1000 : 0; // +1 ثانية للجوال فقط
+    
     // التحقق إذا كان المستخدم قد زار الموقع من قبل
     const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
     
@@ -582,13 +585,13 @@ function initializeWelcomeScreen() {
         // إذا زار من قبل، تظهر الشاشة لفترة متوسطة
         setTimeout(() => {
             hideWelcomeScreen();
-        }, 5500); // زيادة المدة من 1500 إلى 2500
+        }, 5500 + mobileDelay); // إضافة التأخير للجوال
     } else {
         // أول زيارة، تظهر لفترة أطول
         localStorage.setItem('hasVisitedBefore', 'true');
         setTimeout(() => {
             hideWelcomeScreen();
-        }, 1000); // زيادة المدة من 5000 إلى 6000
+        }, 4000 + mobileDelay); // إضافة التأخير للجوال
     }
     
     // إضافة تأثيرات تفاعلية إضافية
@@ -619,7 +622,7 @@ function hideWelcomeScreen() {
                 
                 // إضافة أنيميشن إضافية للمحتوى
                 animateMainContent();
-            }, 9000000000000);
+            }, 100);
         }
         
         // إظهار زر تبديل الثيم بسلاسة
