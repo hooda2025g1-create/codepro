@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>إرسال رمز التحقق - حودا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .otp-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            text-align: center;
+            animation: fadeInUp 0.5s ease;
+        }
+        .otp-icon {
+            font-size: 80px;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .otp-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .otp-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .phone-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .whatsapp-notice {
+            background: #25D366;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .otp-code-display {
+            background: #fffbeb;
+            border: 2px dashed #f59e0b;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 2.5rem;
+            letter-spacing: 10px;
+            color: #333;
+        }
+        .otp-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .otp-btn {
+            flex: 1;
+            padding: 18px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 2px solid #cbd5e1;
+        }
+        .otp-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .timer {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 20px;
+        }
+        .timer-number {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="otp-container">
+        <div class="otp-icon">
+            <i class="fas fa-sms"></i>
+        </div>
+        
+        <h1 class="otp-title">تأكيد رقم الهاتف</h1>
+        <p class="otp-subtitle">
+            تم إرسال رمز تحقق مكون من 6 أرقام إلى رقمك المسجل
+        </p>
+        
+        <div class="phone-display">
+            <i class="fas fa-phone"></i>
+            <span id="phoneNumber">جاري تحميل...</span>
+        </div>
+        
+        <div class="whatsapp-notice">
+            <i class="fab fa-whatsapp"></i>
+            <span>تأكد أن WhatsApp مفتوح على هذا الرقم</span>
+        </div>
+        
+        <div class="otp-code-display" id="otpDisplay">
+            000000
+        </div>
+        
+        <div class="timer">
+            <i class="fas fa-clock"></i>
+            الرمز صالح لمدة: <span class="timer-number" id="timer">05:00</span> دقيقة
+        </div>
+        
+        <div class="otp-actions">
+            <button class="otp-btn btn-primary" onclick="goToVerify()">
+                <i class="fas fa-check-circle"></i> تم استلام الرمز، تابع
+            </button>
+            
+            <button class="otp-btn btn-secondary" onclick="resendOTP()">
+                <i class="fas fa-redo"></i> إعادة إرسال
+            </button>
+        </div>
+        
+        <div id="resendMessage" class="hidden" style="color:#2ed573; margin-top:15px;">
+            ✓ تم إرسال رمز جديد
+        </div>
+    </div>
+
+    <script>
+        // عرض رقم الهاتف من localStorage
+        const userPhone = localStorage.getItem('user_phone') || 'غير معروف';
+        document.getElementById('phoneNumber').textContent = userPhone;
+        
+        // توليد OTP جديد وحفظه
+        let currentOTP = '';
+        
+        function generateOTP() {
+            currentOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('otpDisplay').textContent = currentOTP;
+            
+            // حفظ OTP في Supabase
+            saveOTPToDatabase(currentOTP);
+            
+            // بدء العد التنازلي
+            startTimer(5 * 60); // 5 دقائق
+            
+            // محاكاة إرسال OTP عبر WhatsApp
+            simulateWhatsAppSend(currentOTP);
+        }
+        
+        function saveOTPToDatabase(otp) {
+            // تحديث OTP في قاعدة البيانات
+            const updateOTP = async () => {
+                const { error } = await supabase
+                    .from('users')
+                    .update({ otp_code: otp })
+                    .eq('phone', userPhone);
+                
+                if (error) {
+                    console.error('خطأ في حفظ OTP:', error);
+                } else {
+                    console.log('✅ تم حفظ OTP في قاعدة البيانات');
+                }
+            };
+            updateOTP();
+        }
+        
+        function simulateWhatsAppSend(otp) {
+            console.log(`📱 [محاكاة] تم إرسال OTP إلى ${userPhone}: ${otp}`);
+            console.log('💡 في التطبيق الحقيقي: استخدم خدمة مثل Twilio لإرسال الرسائل الفعلية');
+        }
+        
+        // العد التنازلي
+        let timerInterval;
+        function startTimer(seconds) {
+            clearInterval(timerInterval);
+            
+            const timerElement = document.getElementById('timer');
+            let timeLeft = seconds;
+            
+            timerInterval = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = "00:00";
+                    timerElement.style.color = "#ef4444";
+                    // يمكنك هنا تعطيل زر التابع
+                }
+                
+                timeLeft--;
+            }, 1000);
+        }
+        
+        // الانتقال لصفحة التحقق
+        function goToVerify() {
+            // حفظ OTP في localStorage للتحقق منه في الصفحة التالية
+            localStorage.setItem('pending_otp', currentOTP);
+            window.location.href = '5_verify_otp.html';
+        }
+        
+        // إعادة إرسال OTP
+        function resendOTP() {
+            generateOTP();
+            document.getElementById('resendMessage').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('resendMessage').classList.add('hidden');
+            }, 3000);
+        }
+        
+        // توليد OTP عند تحميل الصفحة
+        generateOTP();
+    </script>
+</body>
+</html>
