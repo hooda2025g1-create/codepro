@@ -20,7 +20,7 @@
             --info-color: #06b6d4;
             
             /* ألوان النص والخلفية */
-            --text-primary: #1f2937;
+            --text-primary: #000000;
             --text-secondary: #6b7280;
             --text-light: #9ca3af;
             --bg-primary: #ffffff;
@@ -2106,37 +2106,6 @@
                             <p>مطور الواجهة الأمامية</p>
                         </div>
                     </div>
-                    
-                    <div class="idea-creator">
-                        <i class="fas fa-lightbulb"></i>
-                        <div>
-                            <strong>صاحبة الفكرة:</strong>
-                            <p>سلمي سيد سخيل</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="team-showcase">
-                    <h3><i class="fas fa-users"></i> فريق العمل</h3>
-                    <div class="team-list">
-                        <div class="team-item">
-                            <i class="fas fa-user-graduate"></i>
-                            <span>يمني علاء</span>
-                            <small>عضو فريق</small>
-                        </div>
-                        <div class="team-item">
-                            <i class="fas fa-user-graduate"></i>
-                            <span>شهد شوقي</span>
-                            <small>عضو فريق</small>
-                        </div>
-                        <div class="team-item">
-                            <i class="fas fa-user-graduate"></i>
-                            <span>بتول جورج</span>
-                            <small>عضو فريق</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </header>
 
         <!-- المحتوى الرئيسي -->
@@ -2317,13 +2286,9 @@ if (age >= 18) {
                 </div>
                 
                 <div class="footer-section">
-                    <h3><i class="fas fa-users"></i> فريق التطوير</h3>
+                    <h3><i class="fas fa-users"></i> المطور</h3>
                     <ul class="team-credits">
                         <li>محمود أحمد سعيد - المطور الرئيسي</li>
-                        <li>سلمي سيد سخيل - صاحبة الفكرة</li>
-                        <li>يمني علاء - عضو</li>
-                        <li>شهد شوقي - عضو</li>
-                        <li>بتول جورج - عضو</li>
                     </ul>
                 </div>
                 
@@ -3612,7 +3577,7 @@ try {
                     const savedTheme = localStorage.getItem('theme') || 'light';
                     document.documentElement.setAttribute('data-theme', savedTheme);
                 }
-            }, 500);
+            }, 6000);
             
             // إعداد إغلاق النافذة عند النقر خارجها
             document.getElementById('loginModal').addEventListener('click', function(e) {
