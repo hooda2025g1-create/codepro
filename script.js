@@ -16,7 +16,12 @@ const deviceInfo = {
     isSmallScreen: window.innerWidth < 640,
     isTouchSupported: isTouchDevice,
     isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent),
-    isAndroid: /Android/.test(navigator.userAgent)
+    isAndroid: /Android/.test(navigator.userAgent),
+    isPixel: /Pixel/i.test(navigator.userAgent),
+    isSamsung: /Samsung/i.test(navigator.userAgent),
+    screenWidth: window.innerWidth,
+    screenHeight: window.innerHeight,
+    devicePixelRatio: window.devicePixelRatio
 };
 
 // تحسين أداء اللمس
@@ -90,6 +95,167 @@ function optimizeImages() {
         document.head.appendChild(style);
     }
 }
+
+// ====== تحسينات متخصصة لصفحة الامتحانات ====== 
+
+// تحسين واجهة الامتحان على الجوال
+function optimizeExamMobile() {
+    if (!deviceInfo.isMobile) return;
+    
+    // تحسين مساحة الشاشة
+    const examPage = document.querySelector('.exam-page');
+    if (examPage) {
+        examPage.style.minHeight = '100vh';
+    }
+    
+    // تحسين تمرير الأسئلة
+    const questionsContainer = document.querySelector('.questions-container');
+    if (questionsContainer) {
+        questionsContainer.style.overflowY = 'auto';
+        questionsContainer.style.webkitOverflowScrolling = 'touch';
+    }
+    
+    // تحسين الخيارات
+    const optionItems = document.querySelectorAll('.option-item');
+    optionItems.forEach(option => {
+        option.style.touchAction = 'manipulation';
+        option.style.userSelect = 'none';
+    });
+}
+
+// تحسين خاص لأجهزة Pixel
+function optimizeForPixel() {
+    if (!deviceInfo.isPixel) return;
+    
+    // إضافة تحسينات خاصة لـ Pixel
+    const style = document.createElement('style');
+    style.textContent = `
+        /* تحسينات خاصة بـ Pixel */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        .exam-header,
+        .questions-container,
+        .controls-section {
+            background: var(--bg-primary);
+            border-radius: 12px;
+        }
+        
+        .option-item {
+            border-radius: 10px;
+            padding: 13px 15px;
+        }
+        
+        .question-item {
+            border-radius: 12px;
+            padding: 14px;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// تحسين خاص لأجهزة Samsung
+function optimizeForSamsung() {
+    if (!deviceInfo.isSamsung) return;
+    
+    // إضافة تحسينات خاصة لـ Samsung
+    const style = document.createElement('style');
+    style.textContent = `
+        /* تحسينات خاصة بـ Samsung */
+        body {
+            font-family: 'Samsung One', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        .exam-container {
+            gap: 18px;
+        }
+        
+        .question-item {
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// تحسين عام لصفحة الامتحان
+function enhanceExamPage() {
+    // إضافة class للصفحة إذا كانت على جوال
+    if (deviceInfo.isMobile) {
+        document.body.classList.add('mobile-exam');
+    }
+    
+    // تحسين معالجات الأسئلة
+    const questionItems = document.querySelectorAll('.question-item');
+    questionItems.forEach((item, index) => {
+        // تحسين الأداء بإضافة معرّف فريد
+        item.setAttribute('data-question-id', index + 1);
+        
+        // منع الانتقاء غير الضروري
+        item.style.userSelect = 'none';
+        
+        // تحسين اللمس
+        if (deviceInfo.isTouchSupported) {
+            item.addEventListener('touchstart', function() {
+                this.style.opacity = '0.9';
+            });
+            
+            item.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+            });
+        }
+    });
+    
+    // تحسين الخيارات
+    const optionItems = document.querySelectorAll('.option-item');
+    optionItems.forEach((option, index) => {
+        option.setAttribute('data-option-id', String.fromCharCode(65 + index)); // A, B, C, D
+        option.style.cursor = 'pointer';
+        
+        // تحسين المساحة اللازمة للمس
+        if (deviceInfo.isMobile) {
+            option.style.minHeight = '44px';
+            option.style.display = 'flex';
+            option.style.alignItems = 'center';
+        }
+    });
+    
+    // تحسين أزرار التحكم
+    const submitBtn = document.querySelector('.submit-exam-btn');
+    const saveBtn = document.querySelector('.save-exam-btn');
+    const exitBtn = document.querySelector('.exit-exam-btn');
+    
+    [submitBtn, saveBtn, exitBtn].forEach(btn => {
+        if (btn) {
+            btn.style.minHeight = '48px';
+            btn.style.touchAction = 'manipulation';
+        }
+    });
+}
+
+// معالج تغيير حجم النافذة
+function handleWindowResize() {
+    // تحديث معلومات الجهاز عند تغيير حجم الشاشة
+    deviceInfo.screenWidth = window.innerWidth;
+    deviceInfo.screenHeight = window.innerHeight;
+    deviceInfo.isSmallScreen = window.innerWidth < 640;
+    
+    // إعادة تطبيق التحسينات
+    if (document.querySelector('.exam-page')) {
+        optimizeExamMobile();
+    }
+}
+
+// إضافة معالج تغيير حجم النافذة
+window.addEventListener('resize', handleWindowResize);
+
+// إضافة معالج تغيير الاتجاه
+window.addEventListener('orientationchange', function() {
+    setTimeout(() => {
+        handleWindowResize();
+    }, 500);
+});
 
 // =============================================
 // 2. مكتبة الأمثلة الكاملة (15 مثال)
@@ -648,6 +814,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // إضافة التحسينات الأخرى
         enhanceMobileModalExperience();
         setupSmoothScrolling();
+        
+        // تحسينات صفحة الامتحانات للجوال
+        optimizeExamMobile();
+        optimizeForPixel();
+        optimizeForSamsung();
+        enhanceExamPage();
         
         // تحسينات إضافية للجوال
         if (isTouchDevice) {
