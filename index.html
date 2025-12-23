@@ -29,6 +29,17 @@
     <meta name="twitter:description" content="منصة تعليمية متقدمة لتعلم JavaScript مع محرر كود متطور وامتحانات تفاعلية">
     <meta name="twitter:image" content="/og-image.svg">
     <link rel="image_src" href="/og-image.svg">
+    <script>
+        (function(){
+            try{
+                var ua = navigator.userAgent || navigator.vendor || window.opera || '';
+                if(/Pixel|Pixel\s?XL|Pixel\s?2|Pixel\s?3|Pixel\s?4|Pixel\s?5|Pixel\s?6|Pixel\s?7|Pixel\s?8/i.test(ua) || /Android.*Pixel/i.test(ua)){
+                    // add class on the root element early so CSS rules can match as soon as possible
+                    document.documentElement.classList.add('pixel-device');
+                }
+            }catch(e){ /* ignore */ }
+        })();
+    </script>
     <style>
         /* ====== إعدادات CSS العامة ====== */
         :root {
@@ -2011,6 +2022,79 @@
         }
     </style>
     <style>
+        /* Emergency: extra-aggressive Pixel / very-small phone squeeze */
+        @media (max-width: 480px) {
+            html.pixel-device .mobile-exam .exam-title h1,
+            body.pixel-device .mobile-exam .exam-title h1,
+            html.pixel-device .exam-title h1,
+            body.pixel-device .exam-title h1 {
+                display: none !important;
+            }
+
+            html.pixel-device .mobile-exam .student-card,
+            body.pixel-device .mobile-exam .student-card,
+            html.pixel-device .student-card,
+            body.pixel-device .student-card {
+                display: none !important;
+            }
+
+            /* Make timer tiny and compact */
+            html.pixel-device .mobile-exam .exam-timer,
+            body.pixel-device .mobile-exam .exam-timer,
+            html.pixel-device .exam-timer,
+            body.pixel-device .exam-timer {
+                padding: 3px 6px !important;
+                min-width: 48px !important;
+                font-size: 0.72rem !important;
+                border-radius: 8px !important;
+            }
+
+            html.pixel-device .mobile-exam .timer-display,
+            body.pixel-device .mobile-exam .timer-display,
+            html.pixel-device .timer-display,
+            body.pixel-device .timer-display {
+                font-size: 0.72rem !important;
+                gap: 4px !important;
+                margin-bottom: 0 !important;
+            }
+
+            /* Remove header vertical space */
+            html.pixel-device .mobile-exam .exam-header,
+            body.pixel-device .mobile-exam .exam-header,
+            html.pixel-device .exam-header,
+            body.pixel-device .exam-header {
+                padding: 2px 4px !important;
+                box-shadow: none !important;
+                line-height: 1 !important;
+            }
+
+            /* Move questions toggle higher to avoid overlap */
+            html.pixel-device .questions-toggle-btn,
+            body.pixel-device .questions-toggle-btn {
+                bottom: 52px !important;
+                right: 8px !important;
+                width: 42px !important;
+                height: 42px !important;
+            }
+
+            /* Hide badge to save horizontal space */
+            html.pixel-device .exam-badge,
+            body.pixel-device .exam-badge {
+                display: none !important;
+            }
+        }
+
+        /* Extra tiny screens */
+        @media (max-width: 420px) {
+            html.pixel-device .mobile-exam .exam-header,
+            body.pixel-device .mobile-exam .exam-header {
+                padding: 1px 4px !important;
+            }
+            html.pixel-device .questions-toggle-btn,
+            body.pixel-device .questions-toggle-btn { bottom: 40px !important; }
+        }
+    </style>
+    <style>
         /* تجاوزات سريعة لصفحة الامتحان عند تمييز body بـ mobile-exam */
         @media (max-width: 768px) {
             body.mobile-exam .exam-header {
@@ -2400,6 +2484,179 @@
             /* Pixel extra squeeze */
             body.pixel-device .exam-header { padding: 2px 4px !important; }
             body.pixel-device .exam-title i { font-size: 1rem !important; }
+        }
+
+        /* Pixel-specific: تحسين واجهة الترحيب على هواتف Pixel الصغيرة */
+        @media (max-width: 420px) {
+            body.pixel-device .welcome-screen {
+                padding: 10px !important;
+                align-items: flex-start !important;
+                justify-content: flex-start !important;
+                background: linear-gradient(180deg, rgba(37,99,235,0.06), rgba(124,58,237,0.03)) !important;
+            }
+
+            body.pixel-device .welcome-content {
+                width: 100% !important;
+                padding: 12px !important;
+                gap: 10px !important;
+                border-radius: 12px !important;
+                box-shadow: none !important;
+            }
+
+            body.pixel-device .welcome-logo {
+                width: 64px !important;
+                height: 64px !important;
+                margin-bottom: 8px !important;
+            }
+
+            body.pixel-device .welcome-logo i {
+                font-size: 26px !important;
+            }
+
+            body.pixel-device .welcome-name {
+                font-size: 1.6rem !important;
+                line-height: 1.1 !important;
+                text-align: left !important;
+            }
+
+            body.pixel-device .welcome-subtitle {
+                font-size: 0.95rem !important;
+                text-align: left !important;
+                opacity: 0.95 !important;
+            }
+
+            /* اجعل زر الامتحان أصغر ويسهل الوصول إليه بإبهام اليد اليمنى */
+            body.pixel-device .exam-button-container {
+                left: auto !important;
+                right: 12px !important;
+                bottom: 18px !important;
+            }
+        }
+
+        /* ====== تحسينات إضافية للهواتف و Pixel ====== */
+        /* تحاشي عناصر الواجهة مع الحواف الآمنة (notch / gesture area) */
+        body.mobile-exam {
+            padding-bottom: env(safe-area-inset-bottom, 12px);
+        }
+
+        /* اجعل زر الشريط الجانبي يتجنب الحواف ويكون سهل اللمس */
+        .questions-toggle-btn {
+            right: calc(12px + env(safe-area-inset-right, 0));
+            bottom: calc(80px + env(safe-area-inset-bottom, 0));
+            touch-action: manipulation;
+            z-index: 3002;
+        }
+
+        /* لوحة الأسئلة المحمولة: ارتفاع ديناميكي وتمريرة داخلية */
+        .mobile-questions-panel {
+            height: 100dvh;
+            max-height: 100dvh;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom, 12px));
+            overflow-y: auto;
+        }
+
+        .mobile-questions-panel .mobile-questions-panel-inner {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        /* تحسينات خاصة بأجهزة Pixel (قابلة للتعديل حسب الحاجة) */
+        body.pixel-device .questions-toggle-btn {
+            right: 8px !important;
+            bottom: 72px !important;
+            width: 44px !important;
+            height: 44px !important;
+        }
+
+        /* اجعل عنوان الامتحان يختصر بشكل جيد على الشاشات الصغيرة */
+        body.mobile-exam .exam-title h1 {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 56vw;
+        }
+
+        /* ====== Pixel header compact overrides (stronger) ====== */
+        /* قواعد أقوى لأجهزة Pixel لتقليل حجم الهيدر والبطاقة */
+        body.pixel-device .exam-header {
+            padding: 4px 6px !important;
+            box-shadow: none !important;
+            line-height: 1 !important;
+        }
+
+        body.pixel-device .exam-header-content {
+            gap: 4px !important;
+            max-width: 100% !important;
+            padding: 0 4px !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+
+        body.pixel-device .exam-title h1 {
+            font-size: 0.85rem !important;
+            max-width: 38vw !important;
+            display: inline-block !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            margin: 0 !important;
+            font-weight: 700 !important;
+        }
+
+        body.pixel-device .exam-title i {
+            font-size: 0.95rem !important;
+            margin-right: 6px !important;
+        }
+
+        /* اجعل شريط الوقت أصغر ومضغوط أكثر */
+        body.pixel-device .exam-timer {
+            padding: 4px 6px !important;
+            min-width: 60px !important;
+            font-size: 0.82rem !important;
+            border-radius: 10px !important;
+        }
+
+        body.pixel-device .timer-display {
+            font-size: 0.85rem !important;
+            gap: 6px !important;
+        }
+
+        /* تصغير بطاقة الطالب جداً */
+        body.pixel-device .student-card {
+            padding: 2px 6px !important;
+            min-width: auto !important;
+            font-size: 0.72rem !important;
+            gap: 6px !important;
+        }
+
+        body.pixel-device .student-card i {
+            font-size: 1rem !important;
+        }
+
+        /* إخفاء عنصر الشارة (badge) على Pixel لتوفير عرض */
+        body.pixel-device .exam-badge { display: none !important; }
+
+        /* على الشاشات الأصغر جداً نخفي بطاقة الطالب لتوفير المساحة */
+        @media (max-width: 420px) {
+            body.pixel-device .student-card { display: none !important; }
+            body.pixel-device .exam-title h1 { max-width: 66vw !important; }
+        }
+
+        /* لوحات أصغر على الشاشات الصغيرة جداً */
+        @media (max-width: 420px) {
+            .questions-toggle-btn { bottom: 60px !important; }
+            .mobile-questions-panel { width: 88% !important; }
+            .mobile-questions-panel.open { transform: translateX(0); }
+            .mobile-questions-panel .mobile-questions-panel-inner { grid-template-columns: repeat(4, 1fr) !important; }
+        }
+
+        /* زيادة دقة هدف اللمس وتقليل تداخل الأحداث داخل الأيقونة */
+        .questions-toggle-btn { padding: 0; }
+        .questions-toggle-btn i { pointer-events: none; }
+
+        /* اجعل عناصر هيدر الامتحان أقل انكساراً على الموبايل */
+        @media (max-width: 480px) {
+            .exam-header-content { gap: 6px !important; align-items: center !important; }
+            .exam-title h1 { max-width: 50vw !important; font-size: 0.95rem !important; }
         }
 
     </style>
@@ -3264,19 +3521,35 @@ if (age >= 18) {
                 if (firstControls) firstControls.insertBefore(controls, firstControls.firstChild);
             }
 
-            // زر الشريط الجانبي
+            // زر الشريط الجانبي (إنشاؤه ديناميكياً) مع تحسينات الوصول ودعم أجهزة Pixel
             if (!document.getElementById('questionsToggleBtn')) {
+                // وسم جهاز Pixel لوضع تعديلات CSS خاصة به
+                try {
+                    const ua = navigator.userAgent || '';
+                    if (/Pixel/i.test(ua) || /Pixel/.test(ua)) document.body.classList.add('pixel-device');
+                } catch (e) {}
+
                 const toggleBtn = document.createElement('button');
                 toggleBtn.id = 'questionsToggleBtn';
                 toggleBtn.className = 'questions-toggle-btn';
-                toggleBtn.innerHTML = '<i class="fas fa-list"></i>';
+                toggleBtn.type = 'button';
+                toggleBtn.setAttribute('aria-label', 'فتح لوحة الأسئلة');
+                toggleBtn.setAttribute('aria-expanded', 'false');
+                toggleBtn.innerHTML = '<i class="fas fa-list" aria-hidden="true"></i>';
                 toggleBtn.onclick = () => toggleMobileQuestionsPanel();
+                // ضمان ظهور الزر فوق أي عناصر أخرى
+                toggleBtn.style.zIndex = '9999';
                 document.body.appendChild(toggleBtn);
 
                 const panel = document.createElement('div');
                 panel.id = 'mobileQuestionsPanel';
                 panel.className = 'mobile-questions-panel';
-                panel.innerHTML = '<div class="mobile-questions-panel-inner" id="mobileQuestionsInner"></div>';
+                panel.setAttribute('role', 'dialog');
+                panel.setAttribute('aria-hidden', 'true');
+                panel.innerHTML = '<div class="mobile-questions-panel-inner" id="mobileQuestionsInner" role="navigation" aria-label="لوحة الأسئلة"></div>';
+                // احترس من الحواف الآمنة على الأجهزة الحديثة
+                panel.style.paddingBottom = 'calc(20px + env(safe-area-inset-bottom, 12px))';
+                panel.style.zIndex = '9998';
                 document.body.appendChild(panel);
             }
 
@@ -3300,12 +3573,17 @@ if (age >= 18) {
         function toggleMobileQuestionsPanel(force) {
             const panel = document.getElementById('mobileQuestionsPanel');
             if (!panel) return;
+            const btn = document.getElementById('questionsToggleBtn');
             if (typeof force === 'boolean') {
                 if (force) panel.classList.add('open'); else panel.classList.remove('open');
             } else {
                 panel.classList.toggle('open');
             }
-            if (panel.classList.contains('open')) renderNavigationMobile();
+            const isOpen = panel.classList.contains('open');
+            // تحديث حالات الوصول
+            panel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            if (isOpen) renderNavigationMobile();
         }
 
         function updateMobileNavAnswered() {
