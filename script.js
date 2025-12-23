@@ -24,6 +24,15 @@ const deviceInfo = {
     devicePixelRatio: window.devicePixelRatio
 };
 
+// إذا كان جهاز Pixel أضف فئة إلى الـ body ليمكن استهدافها في CSS
+window.addEventListener('DOMContentLoaded', () => {
+    try {
+        if (deviceInfo.isPixel) document.body.classList.add('pixel-device');
+    } catch (e) {
+        // ignore
+    }
+});
+
 // تحسين أداء اللمس
 function disableScaleOnInputFocus() {
     if (deviceInfo.isMobile || deviceInfo.isTablet) {

@@ -2229,83 +2229,177 @@
         @media (max-width: 1024px) {
             /* تقليل الحشوة والهوامش لتقليل المساحة الرأسية */
             body.mobile-exam .exam-header {
-                padding: 8px 12px !important;
+                padding: 6px 8px !important;
+                background-size: cover;
             }
 
             body.mobile-exam .exam-header-content {
                 gap: 6px !important;
                 align-items: center !important;
+                max-width: 1000px !important;
+                padding: 0 !important;
             }
 
             body.mobile-exam .exam-title h1 {
-                font-size: 1rem !important;
+                font-size: 0.95rem !important;
                 margin: 0 !important;
+                font-weight: 700;
             }
 
             body.mobile-exam .exam-title i {
-                font-size: 1.2rem !important;
+                font-size: 1rem !important;
             }
 
             body.mobile-exam .exam-badge {
-                padding: 4px 8px !important;
-                font-size: 0.85rem !important;
+                padding: 3px 6px !important;
+                font-size: 0.75rem !important;
             }
 
             body.mobile-exam .exam-timer {
-                padding: 6px 8px !important;
-                min-width: 90px !important;
+                padding: 4px 6px !important;
+                min-width: 80px !important;
             }
 
             body.mobile-exam .timer-display {
-                font-size: 1rem !important;
+                font-size: 0.95rem !important;
                 gap: 6px !important;
+                margin-bottom: 0 !important;
             }
 
             body.mobile-exam .student-card {
-                padding: 6px 8px !important;
+                padding: 4px 6px !important;
                 min-width: auto !important;
-                font-size: 0.85rem !important;
+                font-size: 0.8rem !important;
+            }
+
+            /* اجعل الهيدر أكثر تماسكاً: قلل المسافة العلوية للـ container */
+            .exam-container {
+                margin: 8px auto !important;
+                padding-top: 6px !important;
             }
 
             /* خفف حجم زر الشريط الجانبي قليلاً */
             .questions-toggle-btn {
-                bottom: 110px !important;
-                right: 14px !important;
-                width: 50px !important;
-                height: 50px !important;
+                bottom: 100px !important;
+                right: 12px !important;
+                width: 48px !important;
+                height: 48px !important;
             }
         }
 
         @media (max-width: 480px) {
             /* موبايل أصغر: تقليص أكبر، وإخفاء بطاقة الطالب لحفظ المساحة */
             body.mobile-exam .exam-header {
-                padding: 6px 8px !important;
+                padding: 4px 6px !important;
             }
 
             body.mobile-exam .exam-header-content {
                 gap: 6px !important;
-                flex-direction: column !important;
+                flex-direction: row !important;
                 align-items: center !important;
+                justify-content: space-between !important;
+            }
+
+            /* اجعل العنوان أصغر ومرتب إلى جانب الأيقونة */
+            body.mobile-exam .exam-title {
+                gap: 8px !important;
             }
 
             body.mobile-exam .exam-title h1 {
-                font-size: 0.95rem !important;
+                font-size: 0.9rem !important;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 55vw !important;
             }
 
             body.mobile-exam .timer-display {
-                font-size: 0.95rem !important;
+                font-size: 0.9rem !important;
+                font-weight: 700 !important;
             }
 
+            /* إخفاء بطاقة الطالب تماماً على الشاشات الصغيرة جداً */
             body.mobile-exam .student-card {
                 display: none !important;
             }
 
-            .questions-toggle-btn {
-                bottom: 90px !important;
-                right: 10px !important;
-                width: 46px !important;
-                height: 46px !important;
+            /* اجعل مساحة الحاوية أقل */
+            .exam-container {
+                margin: 6px auto !important;
+                padding: 0 6px !important;
             }
+
+            .questions-toggle-btn {
+                bottom: 80px !important;
+                right: 8px !important;
+                width: 44px !important;
+                height: 44px !important;
+            }
+        }
+
+        /* Pixel-specific: اخفاء عنوان الامتحان على هواتف Pixel الصغيرة */
+        @media (max-width: 480px) {
+            body.pixel-device .exam-title h1 {
+                display: none !important;
+            }
+            body.pixel-device .exam-title i {
+                margin-right: 6px;
+                font-size: 1.1rem !important;
+            }
+        }
+
+        /* ====== Extra compact header for very small phones ====== */
+        @media (max-width: 420px) {
+            /* Make header as small as possible to save vertical space */
+            body.mobile-exam .exam-header {
+                padding: 2px 6px !important;
+                box-shadow: none !important;
+            }
+
+            body.mobile-exam .exam-header-content {
+                gap: 4px !important;
+                padding: 0 4px !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+            }
+
+            /* Reduce title size and allow it to truncate */
+            body.mobile-exam .exam-title h1 {
+                font-size: 0.8rem !important;
+                margin: 0 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                max-width: 40vw !important;
+            }
+
+            body.mobile-exam .exam-title i {
+                font-size: 1rem !important;
+                margin-right: 6px !important;
+            }
+
+            /* Compact timer */
+            body.mobile-exam .exam-timer {
+                padding: 4px 6px !important;
+                min-width: 70px !important;
+            }
+
+            body.mobile-exam .timer-display {
+                font-size: 0.8rem !important;
+                gap: 6px !important;
+                margin-bottom: 0 !important;
+            }
+
+            /* Hide non-essential elements to save vertical space */
+            body.mobile-exam .exam-badge { display: none !important; }
+            body.mobile-exam .student-card { display: none !important; }
+
+            /* Move the questions toggle a bit up for very small screens */
+            .questions-toggle-btn { bottom: 60px !important; right: 8px !important; }
+
+            /* Pixel extra squeeze */
+            body.pixel-device .exam-header { padding: 2px 4px !important; }
+            body.pixel-device .exam-title i { font-size: 1rem !important; }
         }
 
     </style>
