@@ -1994,6 +1994,205 @@
             }
         }
     </style>
+    <style>
+        /* تجاوزات سريعة لصفحة الامتحان عند تمييز body بـ mobile-exam */
+        @media (max-width: 768px) {
+            body.mobile-exam .exam-header {
+                padding: 12px 12px !important;
+            }
+
+            body.mobile-exam .exam-header-content {
+                max-width: 100% !important;
+                padding: 0 8px !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+
+            body.mobile-exam .exam-timer,
+            body.mobile-exam .student-card {
+                min-width: auto !important;
+                width: 100% !important;
+                padding: 8px 10px !important;
+            }
+
+            body.mobile-exam .exam-container {
+                margin: 8px auto !important;
+                padding: 0 8px !important;
+                gap: 12px !important;
+            }
+
+            body.mobile-exam .questions-container {
+                padding: 12px !important;
+                border-radius: 10px !important;
+                box-shadow: none !important;
+            }
+
+            body.mobile-exam .question-item {
+                padding: 10px !important;
+                margin-bottom: 10px !important;
+                border-radius: 8px !important;
+            }
+
+            body.mobile-exam .option-item {
+                padding: 10px 12px !important;
+                gap: 8px !important;
+            }
+
+            body.mobile-exam .questions-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+            }
+
+            body.mobile-exam .question-text {
+                font-size: 1rem !important;
+                line-height: 1.4 !important;
+            }
+
+            body.mobile-exam .exam-btn {
+                padding: 10px 12px !important;
+                font-size: 0.95rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body.mobile-exam .questions-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            body.mobile-exam .exam-title h1 {
+                font-size: 1.2rem !important;
+            }
+
+            body.mobile-exam .timer-display {
+                font-size: 1.2rem !important;
+            }
+        }
+        /* ====== أنماط لوحة الأسئلة المحمولة والشريط الجانبى ====== */
+        .mobile-nav-controls {
+            display: none;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .mobile-nav-controls .prev-btn,
+        .mobile-nav-controls .next-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* زر الشريط الجانبي */
+        .questions-toggle-btn {
+            position: fixed;
+            right: 18px;
+            bottom: 140px;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3001;
+            box-shadow: 0 8px 20px rgba(37,99,235,0.18);
+            border: none;
+            transform: translateZ(0);
+            transition: transform 150ms ease, box-shadow 150ms ease;
+            font-size: 18px;
+        }
+
+        .questions-toggle-btn:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 12px 30px rgba(37,99,235,0.22);
+        }
+
+        .questions-toggle-btn i {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .mobile-questions-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 320px;
+            max-width: 90%;
+            height: 100vh;
+            background: var(--bg-primary);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+            transform: translateX(110%);
+            transition: transform 0.25s ease;
+            z-index: 3000;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mobile-questions-panel.open {
+            transform: translateX(0);
+        }
+
+        .mobile-questions-panel .mobile-questions-panel-inner {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .mobile-questions-panel .mobile-questions-panel-inner {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .mobile-nav-controls { display: flex; }
+            /* تصغير زر الشريط الجانبي وحركته على الشاشات الصغيرة */
+            .questions-toggle-btn {
+                right: 12px;
+                bottom: 110px;
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                font-size: 16px;
+            }
+
+            /* تصغير المساحات العلوية (الوقت/بطاقة الطالب) */
+            body.mobile-exam .exam-header {
+                padding: 10px 12px !important;
+            }
+
+            body.mobile-exam .exam-header-content {
+                gap: 6px !important;
+            }
+
+            body.mobile-exam .timer-display {
+                font-size: 1rem !important;
+                font-weight: 700;
+            }
+
+            body.mobile-exam .exam-timer {
+                padding: 6px 10px !important;
+                min-width: auto !important;
+            }
+
+            body.mobile-exam .student-card {
+                padding: 6px 8px !important;
+                font-size: 0.85rem !important;
+            }
+        }
+
+        .mobile-questions-panel .question-nav-btn.answered {
+            background: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+    </style>
 </head>
 <body>
     <!-- شاشة الترحيب -->
@@ -2111,7 +2310,7 @@
                         </div>
                         <div class="dev-info">
                             <h3>محمود أحمد سعيد</h3>
-                            <p>مطور الواجهة الأمامية</p>
+                            <p>مطور الرئيسي</p>
                         </div>
                     </div>
         </header>
@@ -2377,7 +2576,8 @@ if (age >= 18) {
             '2023002': { password: 'pass456', name: 'سلمي سيد', grade: 'العاشر' },
             'test': { password: '123', name: 'طالب تجريبي', grade: 'العاشر' },
             'student1': { password: '12345', name: 'أحمد محمد', grade: 'الحادي عشر' },
-            'student2': { password: '54321', name: 'سارة علي', grade: 'الثاني عشر' }
+            'student2': { password: '54321', name: 'سارة علي', grade: 'الثاني عشر' },
+            '470605567': { password: 'p9_tpqNY', name: 'محمود احمد سعيد', grade: 'اولي ثانوي' }
         };
 
         // أسئلة JavaScript أساسيات
@@ -2721,6 +2921,9 @@ if (age >= 18) {
             
             // عرض أزرار التنقل
             renderNavigation();
+
+            // إعداد ضوابط الجوال (التالي/خلف + شريط الأسئلة)
+            setupMobileQuestionControls();
             
             // بدء المؤقت
             startTimer();
@@ -2782,6 +2985,8 @@ if (age >= 18) {
             }
             
             updateStats();
+            // تحديث عرض لوحة التنقل المحمولة إن وُجدت
+            if (typeof updateMobileNavAnswered === 'function') updateMobileNavAnswered();
         }
 
         function navigateToQuestion(index) {
@@ -2807,6 +3012,9 @@ if (age >= 18) {
                 btn.classList.remove('active');
                 if (i === index) btn.classList.add('active');
             });
+
+            // تحديث لوحة التنقل المحمولة
+            if (typeof updateMobileNavAnswered === 'function') updateMobileNavAnswered();
         }
 
         function renderNavigation() {
@@ -2822,6 +3030,81 @@ if (age >= 18) {
                 
                 container.appendChild(button);
             }
+            // تحديث لوحة التنقل المحمولة إن كانت موجودة
+            if (typeof renderNavigationMobile === 'function') renderNavigationMobile();
+        }
+
+        /* ====== وظائف التحكم المحمول لعرض التالي/خلف ولوحة الأسئلة ====== */
+        function setupMobileQuestionControls() {
+            // إظهار/إخفاء نسخة التنقل الافتراضية على الشاشات الصغيرة
+            const isMobile = window.innerWidth <= 768 || document.body.classList.contains('mobile-exam');
+            const qNav = document.getElementById('questionsNav');
+            if (qNav) qNav.style.display = isMobile ? 'none' : '';
+
+            // إضافة أزرار التالي/خلف أعلى الحاوية (مرة واحدة)
+            if (!document.querySelector('.mobile-nav-controls')) {
+                const controls = document.createElement('div');
+                controls.className = 'mobile-nav-controls';
+                controls.innerHTML = `
+                    <button class="prev-btn control-btn" id="prevQuestionBtn" onclick="navigateToQuestion(Math.max(0, currentQuestion-1))">خلف</button>
+                    <button class="next-btn control-btn" id="nextQuestionBtn" onclick="navigateToQuestion(Math.min(javascriptBasicQuestions.length-1, currentQuestion+1))">التالي</button>
+                `;
+                const firstControls = document.querySelector('.exam-container .questions-container');
+                if (firstControls) firstControls.insertBefore(controls, firstControls.firstChild);
+            }
+
+            // زر الشريط الجانبي
+            if (!document.getElementById('questionsToggleBtn')) {
+                const toggleBtn = document.createElement('button');
+                toggleBtn.id = 'questionsToggleBtn';
+                toggleBtn.className = 'questions-toggle-btn';
+                toggleBtn.innerHTML = '<i class="fas fa-list"></i>';
+                toggleBtn.onclick = () => toggleMobileQuestionsPanel();
+                document.body.appendChild(toggleBtn);
+
+                const panel = document.createElement('div');
+                panel.id = 'mobileQuestionsPanel';
+                panel.className = 'mobile-questions-panel';
+                panel.innerHTML = '<div class="mobile-questions-panel-inner" id="mobileQuestionsInner"></div>';
+                document.body.appendChild(panel);
+            }
+
+            renderNavigationMobile();
+            if (typeof updateMobileNavAnswered === 'function') updateMobileNavAnswered();
+        }
+
+        function renderNavigationMobile() {
+            const mobileInner = document.getElementById('mobileQuestionsInner');
+            if (!mobileInner) return;
+            mobileInner.innerHTML = '';
+            for (let i = 0; i < javascriptBasicQuestions.length; i++) {
+                const btn = document.createElement('button');
+                btn.className = `question-nav-btn ${i === currentQuestion ? 'active' : ''} ${examAnswers[i] !== undefined ? 'answered' : ''}`;
+                btn.textContent = i + 1;
+                btn.onclick = (e) => { navigateToQuestion(i); toggleMobileQuestionsPanel(false); };
+                mobileInner.appendChild(btn);
+            }
+        }
+
+        function toggleMobileQuestionsPanel(force) {
+            const panel = document.getElementById('mobileQuestionsPanel');
+            if (!panel) return;
+            if (typeof force === 'boolean') {
+                if (force) panel.classList.add('open'); else panel.classList.remove('open');
+            } else {
+                panel.classList.toggle('open');
+            }
+            if (panel.classList.contains('open')) renderNavigationMobile();
+        }
+
+        function updateMobileNavAnswered() {
+            const mobileInner = document.getElementById('mobileQuestionsInner');
+            if (!mobileInner) return;
+            const buttons = mobileInner.querySelectorAll('.question-nav-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('answered', examAnswers[i] !== undefined);
+                btn.classList.toggle('active', i === currentQuestion);
+            });
         }
 
         function startTimer() {

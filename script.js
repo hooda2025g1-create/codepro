@@ -2489,7 +2489,7 @@ async function testLogin() {
         studentId: '2023001',
         password: 'pass123'
     };
-    
+
     // تحديث حقول النموذج
     document.getElementById('studentId').value = testStudent.studentId;
     document.getElementById('studentPassword').value = testStudent.password;

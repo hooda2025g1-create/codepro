@@ -8,7 +8,8 @@ const students = {
     '2023002': { password: 'pass456', name: 'سلمي سيد', grade: 'العاشر' },
     'test': { password: '123', name: 'طالب تجريبي', grade: 'العاشر' },
     'student1': { password: '12345', name: 'أحمد محمد', grade: 'الحادي عشر' },
-    'student2': { password: '54321', name: 'سارة علي', grade: 'الثاني عشر' }
+    'student2': { password: '54321', name: 'ليلى علي', grade: 'الحادي عشر' },
+    '470605567': { password: 'p9_tpqNY', name: 'محمود احمد سعيد', grade: 'اولي ثانوي' }
 };
 
 // أسئلة JavaScript أساسيات
