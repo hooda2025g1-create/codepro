@@ -210,16 +210,72 @@ html {
 
 /* ====== تحسين الكنترول للأجهزة اللوحية ====== */
 @media (min-width: 768px) and (max-width: 1024px) {
+    /* استخدم عمودين للاستفادة من عرض التابلت */
     .main-content {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        padding: 0 18px;
+        max-width: 1100px;
+        margin: 20px auto;
     }
-    
+
+    /* احتفظ بتخطيطات الامتحان قابلة للقراءة على التابلت */
     .exam-container {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
-    
+
+    /* عناصر التحكم تكون متاحة دائماً لكن لا تغطي المحتوى */
     .exam-controls {
         position: static;
+    }
+
+    /* تعديل أحجام العناوين لتناسب التابلت */
+    .header-title h1 {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+
+    .welcome-name {
+        font-size: 2.4rem;
+    }
+
+    /* تعديل تباعد الرؤوس واللوحات */
+    .editor-header {
+        padding: 16px;
+    }
+
+    /* ضبط أزرار وعناصر الواجهة الثابتة */
+    .exam-button-container {
+        bottom: 24px;
+        left: 24px;
+    }
+
+    .theme-toggle-container {
+        top: 18px;
+        right: 18px;
+        transform: scale(0.98);
+    }
+
+    .modal-container {
+        max-width: 720px;
+    }
+
+    .developer-card, .team-item {
+        min-width: 160px;
+    }
+
+    /* شريط جانبي قابل للتمرير دون تغطية المحتوى */
+    .sidebar, .exam-controls {
+        position: sticky;
+        top: 84px;
+        max-height: calc(100vh - 100px);
+        overflow: auto;
+    }
+
+    /* مساحة آمنة أسفل المحتوى حتى لا تمنع الأزرار الثابتة القراءة */
+    body {
+        padding-bottom: 80px;
     }
 }
 

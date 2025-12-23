@@ -2225,6 +2225,89 @@
             color: white;
         }
 
+        /* ====== تقلص هيدر الامتحان للتابلت والموبايل (يجعل الهدر أصغر) ====== */
+        @media (max-width: 1024px) {
+            /* تقليل الحشوة والهوامش لتقليل المساحة الرأسية */
+            body.mobile-exam .exam-header {
+                padding: 8px 12px !important;
+            }
+
+            body.mobile-exam .exam-header-content {
+                gap: 6px !important;
+                align-items: center !important;
+            }
+
+            body.mobile-exam .exam-title h1 {
+                font-size: 1rem !important;
+                margin: 0 !important;
+            }
+
+            body.mobile-exam .exam-title i {
+                font-size: 1.2rem !important;
+            }
+
+            body.mobile-exam .exam-badge {
+                padding: 4px 8px !important;
+                font-size: 0.85rem !important;
+            }
+
+            body.mobile-exam .exam-timer {
+                padding: 6px 8px !important;
+                min-width: 90px !important;
+            }
+
+            body.mobile-exam .timer-display {
+                font-size: 1rem !important;
+                gap: 6px !important;
+            }
+
+            body.mobile-exam .student-card {
+                padding: 6px 8px !important;
+                min-width: auto !important;
+                font-size: 0.85rem !important;
+            }
+
+            /* خفف حجم زر الشريط الجانبي قليلاً */
+            .questions-toggle-btn {
+                bottom: 110px !important;
+                right: 14px !important;
+                width: 50px !important;
+                height: 50px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* موبايل أصغر: تقليص أكبر، وإخفاء بطاقة الطالب لحفظ المساحة */
+            body.mobile-exam .exam-header {
+                padding: 6px 8px !important;
+            }
+
+            body.mobile-exam .exam-header-content {
+                gap: 6px !important;
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+
+            body.mobile-exam .exam-title h1 {
+                font-size: 0.95rem !important;
+            }
+
+            body.mobile-exam .timer-display {
+                font-size: 0.95rem !important;
+            }
+
+            body.mobile-exam .student-card {
+                display: none !important;
+            }
+
+            .questions-toggle-btn {
+                bottom: 90px !important;
+                right: 10px !important;
+                width: 46px !important;
+                height: 46px !important;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -3069,8 +3152,9 @@ if (age >= 18) {
 
         /* ====== وظائف التحكم المحمول لعرض التالي/خلف ولوحة الأسئلة ====== */
         function setupMobileQuestionControls() {
-            // إظهار/إخفاء نسخة التنقل الافتراضية على الشاشات الصغيرة
-            const isMobile = window.innerWidth <= 768 || document.body.classList.contains('mobile-exam');
+            // إظهار/إخفاء نسخة التنقل الافتراضية على الشاشات الصغيرة والتابلت
+            // اعتبر التابلت مثل الموبايل حتى يظهر زر الشريط الجانبي للأزرار (<=1024px)
+            const isMobile = window.innerWidth <= 1024 || document.body.classList.contains('mobile-exam');
             const qNav = document.getElementById('questionsNav');
             if (qNav) qNav.style.display = isMobile ? 'none' : '';
 
